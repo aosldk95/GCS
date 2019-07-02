@@ -18,6 +18,8 @@ buildscript {
     dependencies {
         //classpath 'com.android.tools.build:gradle:3.4.1'
         classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath "com.android.support:appcompat-v7:28.0.0"
+
 
         //Dexcount gradle plugin
         //classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.4.4'
@@ -117,11 +119,7 @@ allprojects {
         jcenter()
 
         maven {
-            url getMavenRepoUrl()
-            credentials {
-                username getMavenUsername()
-                password getMavenApiKey()
-            }
+            url 'https://navercorp.bintray.com/maps'
         }
     }
 }
