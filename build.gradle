@@ -117,9 +117,17 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url getMavenRepoUrl()
+            credentials {
+                username getMavenUsername()
+                password getMavenApiKey()
+            }
+        }
 
         maven {
             url 'https://navercorp.bintray.com/maps'
+
         }
     }
 }
