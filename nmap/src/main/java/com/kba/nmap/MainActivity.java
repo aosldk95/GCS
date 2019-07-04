@@ -7,7 +7,9 @@ import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 
 import com.naver.maps.geometry.LatLng;
+import com.naver.maps.geometry.LatLngBounds;
 import com.naver.maps.map.CameraPosition;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
@@ -36,9 +38,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @UiThread
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
-        LatLng location = new LatLng(35.94528, 126.682167);
-        CameraPosition cameraPosition = new CameraPosition(location, 8);
-        naverMap.setCameraPosition(cameraPosition);
+        LatLngBounds bounds = new LatLngBounds.Builder()
+                .include(new LatLng(35.94528, 126.682167))
+                .include(new LatLng(35.969389, 126.957333))
+                .include(new LatLng(35.983, 126.717))
+                .include(new LatLng(35.846833, 127.129361))
+                .build();
+        CameraUpdate cameraUpdate = CameraUpdate.fitBounds(bounds,200);
+        naverMap.moveCamera(cameraUpdate);
         Marker marker = new Marker();
         marker.setPosition(new LatLng(35.94528, 126.682167));
         marker.setMap(naverMap);
