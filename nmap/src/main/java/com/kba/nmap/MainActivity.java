@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Spinner;
 
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.geometry.LatLngBounds;
@@ -24,6 +26,8 @@ import com.o3dr.android.client.Drone;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.LinkListener;
 import com.o3dr.android.client.interfaces.TowerListener;
+import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
+import com.o3dr.services.android.lib.drone.connection.ConnectionType;
 import com.o3dr.services.android.lib.drone.property.Type;
 import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 
@@ -86,7 +90,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onDroneEvent(String event, Bundle extras) {
 
+
     }
+
 
     @Override
     public void onDroneServiceInterrupted(String errorMsg) {
