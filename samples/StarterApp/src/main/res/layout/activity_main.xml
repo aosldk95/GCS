@@ -27,14 +27,14 @@
                 android:padding="10dp">
 
                 <Button
-                    android:id="@+id/btnConnect"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/connectionTypeLabel"
-                    android:onClick="onBtnConnectTap"
-                    android:text="Connect" />
+                android:id="@+id/btnConnect"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/connectionTypeLabel"
+                android:onClick="onBtnConnectTap"
+                android:text="Connect" />
 
                 <Spinner
                     android:id="@+id/selectConnectionType"
