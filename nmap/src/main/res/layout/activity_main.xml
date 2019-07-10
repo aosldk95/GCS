@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <fragment
         android:id="@+id/map"
         android:name="com.naver.maps.map.MapFragment"
@@ -13,20 +14,98 @@
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnConnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="20dp"
         android:onClick="onBtnConnectTap"
-        android:text="conect"
+        android:text="connect"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TableRow
+        android:id="@+id/tableRow"
+        android:layout_width="166dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="54dp"
+        app:layout_constraintBottom_toTopOf="@+id/tableRow3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/speedLabelTextView"
+            android:layout_width="64dp"
+            android:layout_height="match_parent"
+            android:text="Speed:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/speedValueTextView"
+            android:layout_width="103dp"
+            android:layout_height="match_parent"
+            android:text="0m/s"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="629dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tableRow"
+        app:layout_constraintTop_toBottomOf="@+id/tableRow">
+
+        <TextView
+            android:id="@+id/altitudeLabelTextView"
+            android:layout_width="65dp"
+            android:layout_height="match_parent"
+            android:text="Altitude:" />
+
+        <TextView
+            android:id="@+id/altitudeValueTextView"
+            android:layout_width="101dp"
+            android:layout_height="match_parent"
+            android:text="0m" />
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/tableRow3"
+        android:layout_width="167dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginBottom="576dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tableRow2"
+        app:layout_constraintTop_toBottomOf="@+id/tableRow"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/distanceLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Distance:"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/distanceValueTextView"
+            android:layout_width="103dp"
+            android:layout_height="match_parent"
+            android:text="0m"
+            android:visibility="visible"
+            tools:visibility="visible" />
+    </TableRow>
 
 
 </android.support.constraint.ConstraintLayout>
