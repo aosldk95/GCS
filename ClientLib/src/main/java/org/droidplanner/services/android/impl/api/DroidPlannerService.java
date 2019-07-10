@@ -219,19 +219,22 @@ public class DroidPlannerService extends Service {
 
     @SuppressLint("NewApi")
     private void updateForegroundNotification() {
-        final Context context = getApplicationContext();
+        return;
 
-        final NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context)
-                .setContentTitle("DroneKit-Android")
-                .setPriority(NotificationCompat.PRIORITY_MIN)
-                .setSmallIcon(R.drawable.ic_stat_notify);
+//        final Context context = getApplicationContext();
+//
+//        final NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context)
+//                .setContentTitle("DroneKit-Android")
+//                .setPriority(NotificationCompat.PRIORITY_MIN)
+//                .setSmallIcon(R.drawable.ic_stat_notify);
+//
+//        final int connectedCount = droneApiStore.size();
+//        if (connectedCount > 1) {
+//            notifBuilder.setContentText(connectedCount + " connected apps");
+//        }
+//        final Notification notification = notifBuilder.build();
+//        startForeground(FOREGROUND_ID, notification);
 
-        final int connectedCount = droneApiStore.size();
-        if (connectedCount > 1) {
-            notifBuilder.setContentText(connectedCount + " connected apps");
-        }
-        final Notification notification = notifBuilder.build();
-        startForeground(FOREGROUND_ID, notification);
 
     }
 

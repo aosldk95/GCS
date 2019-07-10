@@ -157,9 +157,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onBtnConnectTap(View view) {
         if (this.drone.isConnected()) {
             this.drone.disconnect();
+        } else{
+            ConnectionParameter params = ConnectionParameter.newUsbConnection(null);
+            this.drone.connect(params);
         }
 
     }
+
+
 
     @Override
     public void onLinkStateUpdated(@NonNull LinkConnectionStatus connectionStatus) {
