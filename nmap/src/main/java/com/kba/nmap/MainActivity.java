@@ -2,6 +2,8 @@ package com.kba.nmap;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.location.GnssStatus;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -46,6 +48,7 @@ import com.o3dr.services.android.lib.drone.property.Type;
 import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -57,6 +60,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int DEFAULT_UDP_PORT = 14550;
     private static final int DEFAULT_USB_BAUD_RATE = 57600;
 
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
+    private FusedLocationSource locationSource;
+
+    private boolean isGPSEnabled = false;
+    private boolean registGps = false;
+
 
 
     @Override
@@ -66,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
+        locationSource =
+                new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
         final Context context = getApplicationContext();
         this.controlTower = new ControlTower(context);
@@ -81,11 +92,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    protected void updateDistanceFromHome() {
+        TextView distanceTextView = (TextView) findViewById(R.id.distanceValueTextView);
+        Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
+        double vehicleAltitude = droneAltitude.getAltitude();
+        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
+        LatLong vehiclePosition = droneGps.getPosition();
+
+        double distanceFromHome = 0;
+
+        if (droneGps.isValid()) {
+            LatLongAlt vehicle3DPosition = new LatLongAlt(vehiclePosition.getLatitude(), vehiclePosition.getLongitude(), vehicleAltitude);
+            Home droneHome = this.drone.getAttribute(AttributeType.HOME);
+            distanceFromHome = distanceBetweenPoints(droneHome.getCoordinate(), vehicle3DPosition);
+        } else {
+            distanceFromHome = 0;
+        }
+
+        distanceTextView.setText(String.format("%3.1f", distanceFromHome) + "m");
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,  @NonNull int[] grantResults) {
+        if (locationSource.onRequestPermissionsResult(
+                requestCode, permissions, grantResults)) {
+            return;
+        }
+        super.onRequestPermissionsResult(
+                requestCode, permissions, grantResults);
+    }
+
 
     @UiThread
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         naverMap.setMapType(NaverMap.MapType.Satellite);
+        naverMap.setLocationSource(locationSource);
+        naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
+
+        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
+        LatLong Position = droneGps.getPosition();
+        Toast.makeText(getApplicationContext() , "실행",Toast.LENGTH_LONG).show();
+
+        if (droneGps.isValid())
+        {
+            Toast.makeText(getApplicationContext() , "마커",Toast.LENGTH_LONG).show();
+            Marker marker = new Marker();
+            marker.setPosition(new LatLng(Position.getLatitude(), Position.getLongitude()));
+            marker.setMap(naverMap);
+        }
     }
 
     @Override
@@ -196,25 +251,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    protected void updateDistanceFromHome() {
-        TextView distanceTextView = (TextView) findViewById(R.id.distanceValueTextView);
-        Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
-        double vehicleAltitude = droneAltitude.getAltitude();
-        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
-        LatLong vehiclePosition = droneGps.getPosition();
 
-        double distanceFromHome = 0;
 
-        if (droneGps.isValid()) {
-            LatLongAlt vehicle3DPosition = new LatLongAlt(vehiclePosition.getLatitude(), vehiclePosition.getLongitude(), vehicleAltitude);
-            Home droneHome = this.drone.getAttribute(AttributeType.HOME);
-            distanceFromHome = distanceBetweenPoints(droneHome.getCoordinate(), vehicle3DPosition);
-        } else {
-            distanceFromHome = 0;
-        }
-
-        distanceTextView.setText(String.format("%3.1f", distanceFromHome) + "m");
-    }
 
     protected double distanceBetweenPoints(LatLongAlt pointA, LatLongAlt pointB) {
         if (pointA == null || pointB == null) {
