@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private boolean isGPSEnabled = false;
     private boolean registGps = false;
+    private NaverMap mMap;
 
 
 
@@ -130,17 +131,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         naverMap.setLocationSource(locationSource);
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
 
-        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
-        LatLong Position = droneGps.getPosition();
-        Toast.makeText(getApplicationContext() , "실행",Toast.LENGTH_LONG).show();
+        mMap = naverMap;
 
-        if (droneGps.isValid())
-        {
-            Toast.makeText(getApplicationContext() , "마커",Toast.LENGTH_LONG).show();
-            Marker marker = new Marker();
-            marker.setPosition(new LatLng(Position.getLatitude(), Position.getLongitude()));
-            marker.setMap(naverMap);
-        }
+//        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
+//        LatLong Position = droneGps.getPosition();
+//        Toast.makeText(getApplicationContext() , "실행",Toast.LENGTH_LONG).show();
+
+//        if (droneGps.isValid())
+//        {
+//            Toast.makeText(getApplicationContext() , "마커",Toast.LENGTH_LONG).show();
+//            Marker marker = new Marker();
+//            marker.setPosition(new LatLng(Position.getLatitude(), Position.getLongitude()));
+//            marker.setMap(naverMap);
+//        }
     }
 
     @Override
@@ -176,9 +179,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     protected void updateAltitude() {
-        TextView altitudeTextView = (TextView) findViewById(R.id.altitudeValueTextView);
         Altitude droneAltitude = this.drone.getAttribute(AttributeType.ALTITUDE);
-        altitudeTextView.setText(String.format("%3.1f", droneAltitude.getAltitude()) + "m");
     }
 
     protected void updateSpeed() {
@@ -190,6 +191,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onDroneEvent(String event, Bundle extras) {
         switch (event) {
+            case AttributeEvent.GPS_POSITION:
+                updateGpsPosition();
+                break;
+
             case AttributeEvent.STATE_CONNECTED:
                 alertUser("Drone Connected");
                 updateConnectedButton(this.drone.isConnected());
@@ -221,6 +226,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+
+    public void updateGpsPosition() {
+        Marker marker = new Marker();
+        Gps gps = this.drone.getAttribute(AttributeType.GPS);
+        LatLong recentLatLng = gps.getPosition();
+        LatLng naverRecentLatLng = new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude());
+        marker.setPosition(naverRecentLatLng);
+        marker.setMap(mMap);
+    }
 
 
     @Override
