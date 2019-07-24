@@ -340,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements DroneListener, To
     public void onArmButtonTap(View view) {
         State vehicleState = this.drone.getAttribute(AttributeType.STATE);
 
+        Log.i(TAG, AttributeType.STATE);
+
         if (vehicleState.isFlying()) {
             // Land
             VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
