@@ -303,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (event) {
             case AttributeEvent.GPS_POSITION:
                 updateGpsPosition();
+//                updatemap();
                 break;
 
             case AttributeEvent.STATE_CONNECTED:
@@ -352,6 +353,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+//    private void updatemap() {
+//        final Button mapButton = (Button) findViewById(R.id.button);
+//
+//
+//        mapButton.setOnClickListener(new View.OnClickListener() {
+//            private Drone drone;
+//            int mapnumber = 1;
+//            @Override
+//            public void onClick(View view) {
+//                if((mapnumber%2)==1) {
+//                    Gps gps = this.drone.getAttribute(AttributeType.GPS);
+//                    LatLong recentLatLng = gps.getPosition();
+//                    CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
+//                    mMap.moveCamera(cameraUpdate);
+//                    mapButton.setText("맵이동");
+//                }
+//                else {
+//                    mapButton.setText("맵잠금");
+//                    mMap.moveCamera(null);
+//                }
+//                mapnumber = mapnumber + 1;
+//            }
+//        });
+//
+//    }
+
+
+
 
     private void checkSoloState() {
         final SoloState soloState = drone.getAttribute(SoloAttributes.SOLO_STATE);
@@ -362,9 +391,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             alertUser("Solo state is up to date.");
         }
     }
-
+    Marker marker = new Marker();
     public void updateGpsPosition() {
-        Marker marker = new Marker();
+
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
         LatLong recentLatLng = gps.getPosition();
         LatLng naverRecentLatLng = new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude());
@@ -372,13 +401,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         number = number + 1;
         if (number > 1){
             marker.setMap(null);
-        }
+       }
         marker.setMap(mMap);
         marker.setIcon(OverlayImage.fromResource(R.drawable.icons));
         CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-        mMap.moveCamera(cameraUpdate);
+//        mMap.moveCamera(cameraUpdate);
 
-    }
+//        final Button mapButton = (Button) findViewById(R.id.button);
+//
+//        mapButton.setOnClickListener(new View.OnClickListener() {
+//
+//
+//            @Override
+//            public void onClick(View view) {
+//                if(mapButton.getText()){
+//                    mapButton.setText("맵이동");
+//                }
+//                else{
+//                    mapButton.setText("맵잠금");
+//                }
+//
+//            }
+//        });
+//        if((){
+//            mMap.moveCamera(cameraUpdate);
+//        }
+//        else{
+//            mMap.moveCamera(null);
+//        }
+//
+//    }
 
 
 
@@ -408,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             armButton.setText("ARM");
         }
     }
+
 
     @Override
     public void onTowerConnected() {
