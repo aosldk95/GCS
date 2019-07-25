@@ -1,12 +1,17 @@
 package com.kba.nmap;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.location.GnssStatus;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -35,6 +40,7 @@ import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
 import com.o3dr.android.client.apis.ControlApi;
+import com.o3dr.android.client.apis.GimbalApi;
 import com.o3dr.android.client.apis.VehicleApi;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.LinkListener;
@@ -47,7 +53,10 @@ import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
 import com.o3dr.services.android.lib.drone.connection.ConnectionType;
+import com.o3dr.services.android.lib.drone.mission.item.command.YawCondition;
 import com.o3dr.services.android.lib.drone.property.Altitude;
+import com.o3dr.services.android.lib.drone.property.Attitude;
+import com.o3dr.services.android.lib.drone.property.Battery;
 import com.o3dr.services.android.lib.drone.property.Gps;
 import com.o3dr.services.android.lib.drone.property.Home;
 import com.o3dr.services.android.lib.drone.property.Speed;
@@ -83,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     int number = 0;
+    private Attitude droneYow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 onFlightModeSelected(view);
+                ((TextView)parent.getChildAt(0)).setTextColor(Color.WHITE);
             }
 
             @Override
@@ -169,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         } else if (vehicleState.isArmed()) {
             // Take off
-            ControlApi.getApi(this.drone).takeoff(10, new AbstractCommandListener() {
+            ControlApi.getApi(this.drone).takeoff(5, new AbstractCommandListener() {
 
                 @Override
                 public void onSuccess() {
@@ -298,6 +309,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         speedTextView.setText(String.format("%3.1f", droneSpeed.getGroundSpeed()) + "m/s");
     }
 
+    protected void updateYaw() {
+        TextView yawTextView = (TextView) findViewById(R.id.yawview);
+        Attitude droneYaw = this.drone.getAttribute(AttributeType.ATTITUDE);
+        yawTextView.setText(String.format("%3.1f", droneYaw.getYaw()) + "deg");
+    }
+
+
+
+
+    protected void updatesatCount() {
+        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+        GnssStatus dronesatCount = this.drone.getAttribute(AttributeType.GPS);
+        countTextView.setText(String.format("%3.1f", dronesatCount.getSatelliteCount()) );
+    }
+
+    protected void updatevolt() {
+        TextView voltTextView = (TextView) findViewById(R.id.voltview);
+        Battery dronevolt = (Battery) this.drone.getAttribute(AttributeType.BATTERY);
+        voltTextView.setText(String.format("%3.1f", dronevolt.getBatteryVoltage()) + "V");
+    }
+
     @Override
     public void onDroneEvent(String event, Bundle extras) {
         switch (event) {
@@ -342,6 +374,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case AttributeEvent.ALTITUDE_UPDATED:
                 updateAltitude();
+                break;
+
+            case AttributeEvent.BATTERY_UPDATED:
+                updatevolt();
+                break;
+
+            case AttributeEvent.ATTITUDE_UPDATED:
+                updateYaw();
+                break;
+
+            case AttributeEvent.GPS_COUNT:
+                updatesatCount();
                 break;
 
 
@@ -405,7 +449,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setMap(mMap);
         marker.setIcon(OverlayImage.fromResource(R.drawable.icons));
         CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-//        mMap.moveCamera(cameraUpdate);
+        mMap.moveCamera(cameraUpdate);
+
+
+        marker.setAngle((float) droneYow.getYaw());
+        marker.setWidth(40);
+        marker.setHeight(40);
+
 
 //        final Button mapButton = (Button) findViewById(R.id.button);
 //
@@ -430,7 +480,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            mMap.moveCamera(null);
 //        }
 //
-//    }
+    }
 
 
 

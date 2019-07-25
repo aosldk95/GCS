@@ -51,6 +51,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:addStatesFromChildren="true"
+        android:dropDownWidth="wrap_content"
         android:textColor="#ffffff"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/tableRow"
@@ -85,6 +87,7 @@
 
     </TableRow>
 
+
     <TableRow
         android:id="@+id/tableRow"
         android:layout_width="80dp"
@@ -117,7 +120,7 @@
 
     <TableRow
         android:id="@+id/tableRow4"
-        android:layout_width="80dp"
+        android:layout_width="90dp"
         android:layout_height="25dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -143,7 +146,7 @@
 
     <TableRow
         android:id="@+id/tableRow3"
-        android:layout_width="80dp"
+        android:layout_width="70dp"
         android:layout_height="25dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -230,7 +233,7 @@
 
         <TextView
             android:id="@+id/voltview"
-            android:layout_width="101dp"
+            android:layout_width="49dp"
             android:layout_height="match_parent"
             android:text="0V"
             android:textColor="#ffffff" />
