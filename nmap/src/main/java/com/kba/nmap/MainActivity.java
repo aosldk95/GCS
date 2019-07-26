@@ -274,6 +274,44 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
+        final Button cadastral1 = findViewById(R.id.onff1);
+        final Button cadastral2 = findViewById(R.id.onff2);
+        cadastral1.setOnClickListener(new View.OnClickListener() {
+            int number = 1;
+            @Override
+            public void onClick(View view) {
+                if ((number%2)==0) {
+                    cadastral2.setVisibility(View.INVISIBLE);
+
+                } else {
+                    cadastral2.setVisibility(View.VISIBLE);
+
+                }
+                number += 1;
+            }
+
+        });
+        if (cadastral1.getText()=="지적도 on"){
+            naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, true);
+        }
+        else{
+            naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, false);
+        }
+
+        cadastral2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cadastral1.getText()=="지적도 on"){
+                    cadastral1.setText("지적도 off");
+                    cadastral2.setText("지적도 on");
+                }else {
+                    cadastral1.setText("지적도 on");
+                    cadastral2.setText("지적도 off");
+                }
+
+            }
+
+        });
         ctl2.setOnClickListener(new View.OnClickListener() {
             int number = 1;
             @Override
