@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Icon;
+import android.location.GnssMeasurement;
+import android.location.GnssMeasurementsEvent;
+import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
 import android.location.LocationManager;
 import android.os.Build;
@@ -67,6 +70,7 @@ import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -236,7 +240,62 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
 
 
+
+
         mMap = naverMap;
+        final Button ctl2 = findViewById(R.id.con2);
+
+
+        final Button btn1 = findViewById(R.id.map1);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.setMapType(NaverMap.MapType.Basic);
+                ctl2.setText("일반지도");
+            }
+
+        });
+        final Button btn2 = findViewById(R.id.map2);
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.setMapType(NaverMap.MapType.Terrain);
+                ctl2.setText("지형도");
+            }
+
+        });
+        final Button btn3 = findViewById(R.id.map3);
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.setMapType(NaverMap.MapType.Satellite);
+                ctl2.setText("위성지도");
+            }
+
+        });
+
+        ctl2.setOnClickListener(new View.OnClickListener() {
+            int number = 1;
+            @Override
+            public void onClick(View view) {
+                if ((number%2)==0) {
+                    btn1.setVisibility(View.INVISIBLE);
+                    btn2.setVisibility(View.INVISIBLE);
+                    btn3.setVisibility(View.INVISIBLE);
+
+                } else {
+                    btn1.setVisibility(View.VISIBLE);
+                    btn2.setVisibility(View.VISIBLE);
+                    btn3.setVisibility(View.VISIBLE);
+
+                }
+                number += 1;
+            }
+
+        });
+
+
+
 
 //        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
 //        LatLong Position = droneGps.getPosition();
@@ -318,11 +377,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    protected void updatesatCount() {
-        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-        GnssStatus dronesatCount = this.drone.getAttribute(AttributeType.GPS);
-        countTextView.setText(String.format("%3.1f", dronesatCount.getSatelliteCount()) );
-    }
+//    protected void updatesatCount() {
+//        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+//        Gps dronesatCount = this.drone.getAttribute(AttributeType.GPS);
+//        countTextView.setText(String.format("%3.1f", dronesatCount.getSatellitesCount())+"개" );
+//    }
 
     protected void updatevolt() {
         TextView voltTextView = (TextView) findViewById(R.id.voltview);
@@ -332,9 +391,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onDroneEvent(String event, Bundle extras) {
+
+        Log.d("asdf",event);
+
         switch (event) {
+
+
             case AttributeEvent.GPS_POSITION:
                 updateGpsPosition();
+//                updatesatCount();
 //                updatemap();
                 break;
 
@@ -384,9 +449,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateYaw();
                 break;
 
-            case AttributeEvent.GPS_COUNT:
-                updatesatCount();
-                break;
+//            case AttributeEvent.GPS_COUNT:
+//                updatesatCount();
+//                break;
 
 
 
@@ -439,22 +504,67 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void updateGpsPosition() {
 
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
+        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount())+"개" );
         LatLong recentLatLng = gps.getPosition();
         LatLng naverRecentLatLng = new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude());
         marker.setPosition(naverRecentLatLng);
-        number = number + 1;
-        if (number > 1){
-            marker.setMap(null);
-       }
         marker.setMap(mMap);
         marker.setIcon(OverlayImage.fromResource(R.drawable.icons));
-        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
+        final CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
         mMap.moveCamera(cameraUpdate);
 
+        List listA = new ArrayList();
+        listA.add(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
+        ArrowheadPathOverlay arrowheadPath = new ArrowheadPathOverlay();
+        arrowheadPath.setCoords(listA);
+        arrowheadPath.setMap(mMap);
 
-        marker.setAngle((float) droneYow.getYaw());
-        marker.setWidth(40);
-        marker.setHeight(40);
+
+        final Button ctl1 = findViewById(R.id.con1);
+
+        final Button maplack1 = findViewById(R.id.lack1);
+        final Button maplack2 = findViewById(R.id.lack2);
+
+        maplack1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ctl1.setText("맵잠금");
+            }
+
+        });
+        maplack2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ctl1.setText("맵이동");
+            }
+
+        });
+        if(ctl1.getText()=="맵잠금"){
+            mMap.moveCamera(cameraUpdate);
+        }
+
+        ctl1.setOnClickListener(new View.OnClickListener() {
+            int number = 1;
+            @Override
+            public void onClick(View view) {
+                if ((number%2)==0) {
+                    maplack1.setVisibility(View.INVISIBLE);
+                    maplack2.setVisibility(View.INVISIBLE);
+
+                } else {
+                    maplack1.setVisibility(View.VISIBLE);
+                    maplack2.setVisibility(View.VISIBLE);
+
+                }
+                number += 1;
+            }
+
+        });
+
+
+
+
 
 
 //        final Button mapButton = (Button) findViewById(R.id.button);

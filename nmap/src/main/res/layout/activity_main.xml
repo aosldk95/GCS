@@ -182,7 +182,7 @@
         android:textColor="#ffffff"/>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/con1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -190,7 +190,7 @@
         android:layout_marginBottom="8dp"
         android:text="맵잠금"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button3" />
+        app:layout_constraintEnd_toStartOf="@+id/con2" />
 
     <Button
         android:id="@+id/button2"
@@ -204,7 +204,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/con2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -239,6 +239,66 @@
             android:textColor="#ffffff" />
 
     </TableRow>
+
+    <Button
+        android:id="@+id/lack1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="맵잠금"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/con1"
+        app:layout_constraintEnd_toStartOf="@+id/map1" />
+
+    <Button
+        android:id="@+id/lack2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="맵이동"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/lack1"
+        app:layout_constraintEnd_toStartOf="@+id/map2" />
+
+    <Button
+        android:id="@+id/map1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="105dp"
+        android:layout_marginRight="105dp"
+        android:layout_marginBottom="8dp"
+        android:text="일반지도"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/con2"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/map2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="105dp"
+        android:layout_marginRight="105dp"
+        android:layout_marginBottom="8dp"
+        android:text="지형도"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/map1"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/map3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="105dp"
+        android:layout_marginRight="105dp"
+        android:layout_marginBottom="8dp"
+        android:text="위성지도"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/map2"
+        app:layout_constraintEnd_toEndOf="@+id/map" />
 
 
 </android.support.constraint.ConstraintLayout>
