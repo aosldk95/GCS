@@ -246,12 +246,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Button ctl2 = findViewById(R.id.con2);
 
 
+
+
         final Button btn1 = findViewById(R.id.map1);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mMap.setMapType(NaverMap.MapType.Basic);
                 ctl2.setText("일반지도");
+
             }
 
         });
@@ -300,10 +303,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (cadastral1.getText()=="지적도 on"){
                     cadastral1.setText("지적도 off");
                     cadastral2.setText("지적도 on");
+                    cadastral2.setVisibility(View.INVISIBLE);
                     mMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, false);
                 }else {
                     cadastral1.setText("지적도 on");
                     cadastral2.setText("지적도 off");
+                    cadastral2.setVisibility(View.INVISIBLE);
                     mMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, true);
                 }
 
@@ -329,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
+
 
 
 
@@ -558,7 +564,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         listA.add(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-        ArrowheadPathOverlay arrowheadPath = new ArrowheadPathOverlay();
+        final ArrowheadPathOverlay arrowheadPath = new ArrowheadPathOverlay();
         arrowheadPath.setCoords(listA);
         arrowheadPath.setMap(mMap);
 
@@ -572,6 +578,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 ctl1.setText("맵잠금");
+                maplack1.setVisibility(View.INVISIBLE);
+                maplack2.setVisibility(View.INVISIBLE);
             }
 
         });
@@ -579,6 +587,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 ctl1.setText("맵이동");
+                maplack1.setVisibility(View.INVISIBLE);
+                maplack2.setVisibility(View.INVISIBLE);
             }
 
         });
@@ -605,6 +615,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
+
+        Button clea = findViewById(R.id.clr);
+        clea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                arrowheadPath.setMap(null);
+            }
+
+        });
+
+
 
 
 
