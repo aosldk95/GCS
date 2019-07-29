@@ -186,9 +186,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:text="맵잠금"
+        android:text="맵이동"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/con2" />
 
@@ -319,6 +318,7 @@
         android:layout_marginRight="105dp"
         android:layout_marginBottom="8dp"
         android:text="지적도 on"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/onff1"
         app:layout_constraintEnd_toEndOf="parent" />
 

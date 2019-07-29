@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             });
         } else if (vehicleState.isArmed()) {
             // Take off
-            ControlApi.getApi(this.drone).takeoff(5, new AbstractCommandListener() {
+            ControlApi.getApi(this.drone).takeoff(2, new AbstractCommandListener() {
 
                 @Override
                 public void onSuccess() {
@@ -291,12 +291,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         });
-        if (cadastral1.getText()=="지적도 on"){
-            naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, true);
-        }
-        else{
-            naverMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, false);
-        }
+
+
 
         cadastral2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -304,9 +300,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (cadastral1.getText()=="지적도 on"){
                     cadastral1.setText("지적도 off");
                     cadastral2.setText("지적도 on");
+                    mMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, false);
                 }else {
                     cadastral1.setText("지적도 on");
                     cadastral2.setText("지적도 off");
+                    mMap.setLayerGroupEnabled(NaverMap.LAYER_GROUP_CADASTRAL, true);
                 }
 
             }
@@ -415,11 +413,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-//    protected void updatesatCount() {
-//        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-//        Gps dronesatCount = this.drone.getAttribute(AttributeType.GPS);
-//        countTextView.setText(String.format("%3.1f", dronesatCount.getSatellitesCount())+"개" );
-//    }
+    protected void updatesatCount() {
+        Gps gps = this.drone.getAttribute(AttributeType.GPS);
+        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount())+"개" );
+    }
 
     protected void updatevolt() {
         TextView voltTextView = (TextView) findViewById(R.id.voltview);
@@ -437,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case AttributeEvent.GPS_POSITION:
                 updateGpsPosition();
-//                updatesatCount();
+                updatesatCount();
 //                updatemap();
                 break;
 
@@ -526,6 +524,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 //    }
 
+//    protected void updatesatCount() {
+//        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+//        Gps dronesatCount = this.drone.getAttribute(AttributeType.GPS);
+//        countTextView.setText(String.format("%3.1f", dronesatCount.getSatellitesCount())+"개" );
+//    }
 
 
 
@@ -539,20 +542,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
     Marker marker = new Marker();
+    List listA = new ArrayList();
     public void updateGpsPosition() {
 
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
-        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount())+"개" );
+//        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+//        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount()) );
         LatLong recentLatLng = gps.getPosition();
         LatLng naverRecentLatLng = new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude());
         marker.setPosition(naverRecentLatLng);
         marker.setMap(mMap);
         marker.setIcon(OverlayImage.fromResource(R.drawable.icons));
         final CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-        mMap.moveCamera(cameraUpdate);
+//        mMap.moveCamera(cameraUpdate);
 
-        List listA = new ArrayList();
+
         listA.add(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
         ArrowheadPathOverlay arrowheadPath = new ArrowheadPathOverlay();
         arrowheadPath.setCoords(listA);
@@ -583,19 +587,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         ctl1.setOnClickListener(new View.OnClickListener() {
-            int number = 1;
+            int numb = 1;
             @Override
             public void onClick(View view) {
-                if ((number%2)==0) {
+                if ((numb%2)==0) {
                     maplack1.setVisibility(View.INVISIBLE);
                     maplack2.setVisibility(View.INVISIBLE);
+                    numb += 1;
 
-                } else {
+                } else if((numb%2)==1) {
                     maplack1.setVisibility(View.VISIBLE);
                     maplack2.setVisibility(View.VISIBLE);
+                    numb += 1;
 
                 }
-                number += 1;
+
             }
 
         });
