@@ -297,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
         cadastral2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -419,12 +420,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
-    protected void updatesatCount() {
-        Gps gps = this.drone.getAttribute(AttributeType.GPS);
-        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount()) );
-        Log.d("asdf",String.format("%3.1f", gps.getSatellitesCount()));
-    }
+
 
     protected void updatevolt() {
         TextView voltTextView = (TextView) findViewById(R.id.voltview);
@@ -442,8 +438,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case AttributeEvent.GPS_POSITION:
                 updateGpsPosition();
-                updatesatCount();
+//                updatesatCount();
 //                updatemap();
+                break;
+
+            case AttributeEvent.GPS_COUNT:
+                updatesat();
                 break;
 
             case AttributeEvent.STATE_CONNECTED:
@@ -492,11 +492,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateYaw();
                 break;
 
-//            case AttributeEvent.GPS_COUNT:
-//                updatesatCount();
-//                break;
-
-
 
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
@@ -531,11 +526,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 //    }
 
-//    protected void updatesatCount() {
-//        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-//        Gps dronesatCount = this.drone.getAttribute(AttributeType.GPS);
-//        countTextView.setText(String.format("%3.1f", dronesatCount.getSatellitesCount())+"개" );
-//    }
+    protected void updatesat() {
+        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+        Gps gps = this.drone.getAttribute(AttributeType.GPS);
+        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount())+"개" );
+    }
 
 
 
@@ -550,6 +545,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     Marker marker = new Marker();
     List listA = new ArrayList();
+    final ArrowheadPathOverlay arrowheadPath = new ArrowheadPathOverlay();
     public void updateGpsPosition() {
 
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
@@ -561,13 +557,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setMap(mMap);
         marker.setIcon(OverlayImage.fromResource(R.drawable.icons));
         final CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-//        mMap.moveCamera(cameraUpdate);
+        mMap.moveCamera(cameraUpdate);
 
 
         listA.add(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-        final ArrowheadPathOverlay arrowheadPath = new ArrowheadPathOverlay();
         arrowheadPath.setCoords(listA);
         arrowheadPath.setMap(mMap);
+        Button clea = findViewById(R.id.clr);
+        clea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listA.clear();
+                arrowheadPath.setMap(null);
+            }
+
+        });
 
 
         final Button ctl1 = findViewById(R.id.con1);
@@ -617,15 +621,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
-        Button clea = findViewById(R.id.clr);
-        clea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listA.clear();
-                arrowheadPath.setMap(null);
-            }
 
-        });
 
 
 
