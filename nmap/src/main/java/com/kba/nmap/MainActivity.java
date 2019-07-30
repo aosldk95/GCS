@@ -422,19 +422,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void updatesatCount() {
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
         TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount())+"개" );
+        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount()) );
+        Log.d("asdf",String.format("%3.1f", gps.getSatellitesCount()));
     }
 
     protected void updatevolt() {
         TextView voltTextView = (TextView) findViewById(R.id.voltview);
         Battery dronevolt = (Battery) this.drone.getAttribute(AttributeType.BATTERY);
         voltTextView.setText(String.format("%3.1f", dronevolt.getBatteryVoltage()) + "V");
+
     }
 
     @Override
     public void onDroneEvent(String event, Bundle extras) {
 
-        Log.d("asdf",event);
 
         switch (event) {
 
@@ -620,6 +621,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         clea.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                listA.clear();
                 arrowheadPath.setMap(null);
             }
 
