@@ -2,6 +2,7 @@ package com.kba.nmap;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Icon;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.UiThread;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -336,8 +338,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
-
-
+        //State vehicleState = this.drone.getAttribute(AttributeType.STATE);
+//        VehicleMode vehicleMode = vehicleState.getVehicleMode();
+//        ArrayAdapter arrayAdapter = (ArrayAdapter) this.modeSelector.getAdapter();
+//        this.modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+        //mMap.setOnMapLongClickListener((point, coord) ->{});
 
 
 //        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
@@ -411,11 +416,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         speedTextView.setText(String.format("%3.1f", droneSpeed.getGroundSpeed()) + "m/s");
     }
 
-    protected void updateYaw() {
-        TextView yawTextView = (TextView) findViewById(R.id.yawview);
-        Attitude droneYaw = this.drone.getAttribute(AttributeType.ATTITUDE);
-        yawTextView.setText(String.format("%3.1f", droneYaw.getYaw()) + "deg");
-    }
+//    protected void updateYaw() {
+//        TextView yawTextView = (TextView) findViewById(R.id.yawview);
+//        Attitude droneYaw = this.drone.getAttribute(AttributeType.ATTITUDE);
+//        yawTextView.setText(String.format("%3.1f", droneYaw.getYaw()) + "deg");
+//    }
 
 
 
@@ -529,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void updatesat() {
         TextView countTextView = (TextView) findViewById(R.id.satelliteview);
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
-        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount())+"개" );
+        countTextView.setText(gps.getSatellitesCount());
     }
 
 
@@ -555,9 +560,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng naverRecentLatLng = new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude());
         marker.setPosition(naverRecentLatLng);
         marker.setMap(mMap);
-        marker.setIcon(OverlayImage.fromResource(R.drawable.icons));
+        marker.setIcon(OverlayImage.fromResource(R.drawable.grup));
         final CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
-        mMap.moveCamera(cameraUpdate);
+//        mMap.moveCamera(cameraUpdate);
+
 
 
         listA.add(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
@@ -621,15 +627,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
-
-
-
-
-
-
-
-
-
 //        final Button mapButton = (Button) findViewById(R.id.button);
 //
 //        mapButton.setOnClickListener(new View.OnClickListener() {
@@ -655,7 +652,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
     }
 
-
+    protected void updateYaw() {
+        TextView yawTextView = (TextView) findViewById(R.id.yawview);
+        Attitude droneYaw = this.drone.getAttribute(AttributeType.ATTITUDE);
+        float yaw=(float)droneYaw.getYaw();
+        if (yaw<0){
+            yaw = 360 + yaw;
+        }
+        yawTextView.setText(String.format("%3.1f", yaw) + "deg");
+        marker.setAngle(yaw);
+    }
 
     @Override
     public void onDroneServiceInterrupted(String errorMsg) {
@@ -664,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     protected void updateArmButton() {
         State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-        Button armButton = (Button) findViewById(R.id.arm);
+        final Button armButton = (Button) findViewById(R.id.arm);
 
         if (!this.drone.isConnected()) {
             armButton.setVisibility(View.INVISIBLE);
@@ -677,10 +683,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             armButton.setText("LAND");
         } else if (vehicleState.isArmed()) {
             // Take off
-            armButton.setText("TAKE OFF");
+//            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+//            alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();     //닫기
+//                    armButton.setText("TAKE OFF");
+//                }
+//            });
+//            alert.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.");
+//            alert.show();
+
+            AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+            alert_confirm.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.").setCancelable(false).setPositiveButton("확인",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            armButton.setText("TAKE OFF");
+                            // 'YES'
+                        }
+                    }).setNegativeButton("취소",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 'No'
+                            return;
+                        }
+                    });
+            AlertDialog alert = alert_confirm.create();
+            alert.show();
+
         } else if (vehicleState.isConnected()) {
             // Connected but not Armed
             armButton.setText("ARM");
+
         }
     }
 
