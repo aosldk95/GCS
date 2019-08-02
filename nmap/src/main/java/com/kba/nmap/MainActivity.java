@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.drawable.Icon;
 import android.location.GnssMeasurement;
 import android.location.GnssMeasurementsEvent;
@@ -63,6 +64,7 @@ import com.o3dr.services.android.lib.drone.property.Altitude;
 import com.o3dr.services.android.lib.drone.property.Attitude;
 import com.o3dr.services.android.lib.drone.property.Battery;
 import com.o3dr.services.android.lib.drone.property.Gps;
+import com.o3dr.services.android.lib.drone.property.GuidedState;
 import com.o3dr.services.android.lib.drone.property.Home;
 import com.o3dr.services.android.lib.drone.property.Speed;
 import com.o3dr.services.android.lib.drone.property.State;
@@ -72,6 +74,8 @@ import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
+import org.droidplanner.services.android.impl.core.drone.variables.GuidedPoint;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -79,7 +83,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private Drone drone;
+    private Drone drone ;
     private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
     private final Handler handler = new Handler();
@@ -207,18 +211,69 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Connect
             alertUser("Connect to a drone first");
         } else {
-            // Connected but not Armed
-            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
-                @Override
-                public void onError(int executionError) {
-                    alertUser("Unable to arm vehicle.");
-                }
 
-                @Override
-                public void onTimeout() {
-                    alertUser("Arming operation timed out.");
-                }
-            });
+            AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+            alert_confirm.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.").setCancelable(false).setPositiveButton("확인",
+                    new DialogInterface.OnClickListener() {
+
+
+
+
+                        @Override
+
+                        public void onClick(DialogInterface dialog, int which) {
+
+//                            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
+//                                @Override
+//                                public void onError(int executionError) {
+//                                    alertUser("Unable to arm vehicle.");
+//                                }
+//
+//                                @Override
+//                                public void onTimeout() {
+//                                    alertUser("Arming operation timed out.");
+//                                }
+//                            });
+
+
+                            // 'YES'
+                        }
+                    }).setNegativeButton("취소",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 'No'
+                            return;
+                        }
+                    });
+            AlertDialog alert = alert_confirm.create();
+            alert.show();
+
+            // Connected but not Armed
+//            if(){
+//                VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
+//                    @Override
+//                    public void onError(int executionError) {
+//                        alertUser("Unable to arm vehicle.");
+//                    }
+//
+//                    @Override
+//                    public void onTimeout() {
+//                        alertUser("Arming operation timed out.");
+//                    }
+//                });
+//            }
+//            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
+//                @Override
+//                public void onError(int executionError) {
+//                    alertUser("Unable to arm vehicle.");
+//                }
+//
+//                @Override
+//                public void onTimeout() {
+//                    alertUser("Arming operation timed out.");
+//                }
+//            });
         }
     }
 
@@ -338,11 +393,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         });
 
-        //State vehicleState = this.drone.getAttribute(AttributeType.STATE);
+        final State vehicleState = this.drone.getAttribute(AttributeType.STATE);
 //        VehicleMode vehicleMode = vehicleState.getVehicleMode();
 //        ArrayAdapter arrayAdapter = (ArrayAdapter) this.modeSelector.getAdapter();
 //        this.modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
-        //mMap.setOnMapLongClickListener((point, coord) ->{});
+        mMap.setOnMapLongClickListener(new NaverMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(@NonNull PointF point, @NonNull final LatLng coord) {
+
+                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+                alert_confirm.setMessage("해당 위치로 이동하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 'YES'
+                                Marker marker1 = new Marker();
+                                marker1.setPosition(new LatLng(coord.latitude, coord.longitude));
+                                marker1.setMap(mMap);
+                            }
+                        }).setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 'No'
+                                return;
+                            }
+                        });
+                AlertDialog alert = alert_confirm.create();
+                alert.show();
+
+                vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
+
+//                GuidedPoint.;
+            }
+        });
 
 
 //        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
@@ -694,24 +778,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            alert.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.");
 //            alert.show();
 
-            AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
-            alert_confirm.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.").setCancelable(false).setPositiveButton("확인",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            armButton.setText("TAKE OFF");
-                            // 'YES'
-                        }
-                    }).setNegativeButton("취소",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // 'No'
-                            return;
-                        }
-                    });
-            AlertDialog alert = alert_confirm.create();
-            alert.show();
+//            AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+//            alert_confirm.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.").setCancelable(false).setPositiveButton("확인",
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//
+//                            // 'YES'
+//                        }
+//                    }).setNegativeButton("취소",
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            // 'No'
+//                            return;
+//                        }
+//                    });
+//            AlertDialog alert = alert_confirm.create();
+//            alert.show();
+
+            armButton.setText("TAKE OFF");
 
         } else if (vehicleState.isConnected()) {
             // Connected but not Armed
