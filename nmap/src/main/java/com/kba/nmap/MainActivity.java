@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.UiThread;
+import android.support.constraint.Guideline;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -74,6 +75,7 @@ import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
+import org.droidplanner.services.android.impl.core.drone.autopilot.MavLinkDrone;
 import org.droidplanner.services.android.impl.core.drone.variables.GuidedPoint;
 
 import java.util.ArrayList;
@@ -217,9 +219,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             alert_confirm.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.").setCancelable(false).setPositiveButton("확인",
                     new DialogInterface.OnClickListener() {
 
-
-
-
                         @Override
 
                         public void onClick(DialogInterface dialog, int which) {
@@ -236,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             });
 
-
                             // 'YES'
                         }
                     }).setNegativeButton("취소",
@@ -251,19 +249,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             alert.show();
 
             // Connected but not Armed
-//            if(){
-//                VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
-//                    @Override
-//                    public void onError(int executionError) {
-//                        alertUser("Unable to arm vehicle.");
-//                    }
 //
-//                    @Override
-//                    public void onTimeout() {
-//                        alertUser("Arming operation timed out.");
-//                    }
-//                });
-//            }
 //            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
 //                @Override
 //                public void onError(int executionError) {
@@ -395,10 +381,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         final State vehicleState = this.drone.getAttribute(AttributeType.STATE);
-//        VehicleMode vehicleMode = vehicleState.getVehicleMode();
-//        ArrayAdapter arrayAdapter = (ArrayAdapter) this.modeSelector.getAdapter();
-//        this.modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
-//        vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
 
         mMap.setOnMapLongClickListener(new NaverMap.OnMapLongClickListener() {
             @Override
@@ -407,6 +389,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
                 alert_confirm.setMessage("해당 위치로 이동하시겠습니까?").setCancelable(false).setPositiveButton("확인",
                         new DialogInterface.OnClickListener() {
+
+
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // 'YES'
@@ -421,6 +405,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 //                                GuidedPoint point = drone.getAttribute(AttributeType.GUIDED_STATE);
 //                                point.newGuidedPosition(coord.latitude, coord.longitude, 3);
+//                                GuidedPoint.forceSendGuidedPoint(drone, coord);
+
+//                                ControlApi.getApi(this.drone).takeoff(2, new AbstractCommandListener() {
+//
+//                                    @Override
+//                                    public void onSuccess() {
+//                                        alertUser("Taking off...");
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(int i) {
+//                                        alertUser("Unable to take off.");
+//                                    }
+//
+//                                    @Override
+//                                    public void onTimeout() {
+//                                        alertUser("Unable to take off.");
+//                                    }
+//                                });
+
+                                LatLong point = new LatLong(coord.latitude, coord.longitude);
+                                ControlApi.getApi(drone).goTo(point, true, new AbstractCommandListener(){
+                                    @Override
+                                    public void onSuccess() {
+                                        alertUser("Go!!!!!!!!!! to point");
+                                    }
+                                    @Override
+                                    public void onError(int i) {
+                                        alertUser("stop!!!!!!!!!!!! in error");
+                                    }
+                                    @Override
+                                    public void onTimeout() {
+                                        alertUser("stop time limit");
+                                    }
+                                } );
+
+
+
+
 
                             }
                         }).setNegativeButton("취소",
@@ -434,12 +457,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 AlertDialog alert = alert_confirm.create();
                 alert.show();
 
-//                vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
-
-//                GuidedPoint.;
             }
         });
-
 
 //        Gps droneGps = this.drone.getAttribute(AttributeType.GPS);
 //        LatLong Position = droneGps.getPosition();
@@ -512,17 +531,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         speedTextView.setText(String.format("%3.1f", droneSpeed.getGroundSpeed()) + "m/s");
     }
 
-//    protected void updateYaw() {
-//        TextView yawTextView = (TextView) findViewById(R.id.yawview);
-//        Attitude droneYaw = this.drone.getAttribute(AttributeType.ATTITUDE);
-//        yawTextView.setText(String.format("%3.1f", droneYaw.getYaw()) + "deg");
-//    }
-
-
-
-
-
-
     protected void updatevolt() {
         TextView voltTextView = (TextView) findViewById(R.id.voltview);
         Battery dronevolt = (Battery) this.drone.getAttribute(AttributeType.BATTERY);
@@ -540,7 +548,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case AttributeEvent.GPS_POSITION:
                 updateGpsPosition();
 //                updatesatCount();
-//                updatemap();
                 break;
 
             case AttributeEvent.GPS_COUNT:
@@ -601,10 +608,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-//    private void updatemap() {
-//        final Button mapButton = (Button) findViewById(R.id.button);
-//
-//
+
 //        mapButton.setOnClickListener(new View.OnClickListener() {
 //            private Drone drone;
 //            int mapnumber = 1;
@@ -633,8 +637,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         countTextView.setText(gps.getSatellitesCount());
     }
 
-
-
     private void checkSoloState() {
         final SoloState soloState = drone.getAttribute(SoloAttributes.SOLO_STATE);
         if (soloState == null){
@@ -659,7 +661,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         marker.setIcon(OverlayImage.fromResource(R.drawable.grup));
         final CameraUpdate cameraUpdate = CameraUpdate.scrollTo(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
 //        mMap.moveCamera(cameraUpdate);
-
 
 
         listA.add(new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude()));
