@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             alertUser("Connect to a drone first");
         } else {
 
+
             AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
             alert_confirm.setMessage("시동을 걸면 프로펠러가 고속으로 회전합니다.").setCancelable(false).setPositiveButton("확인",
                     new DialogInterface.OnClickListener() {
@@ -223,17 +224,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         public void onClick(DialogInterface dialog, int which) {
 
-//                            VehicleApi.getApi(this.drone).arm(true, false, new SimpleCommandListener() {
-//                                @Override
-//                                public void onError(int executionError) {
-//                                    alertUser("Unable to arm vehicle.");
-//                                }
-//
-//                                @Override
-//                                public void onTimeout() {
-//                                    alertUser("Arming operation timed out.");
-//                                }
-//                            });
+                            VehicleApi.getApi(drone).arm(true, false, new SimpleCommandListener() {
+                                @Override
+                                public void onError(int executionError) {
+                                    alertUser("Unable to arm vehicle.");
+                                }
+
+                                @Override
+                                public void onTimeout() {
+                                    alertUser("Arming operation timed out.");
+                                }
+                            });
 
 
                             // 'YES'
@@ -397,6 +398,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        VehicleMode vehicleMode = vehicleState.getVehicleMode();
 //        ArrayAdapter arrayAdapter = (ArrayAdapter) this.modeSelector.getAdapter();
 //        this.modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+//        vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
+
         mMap.setOnMapLongClickListener(new NaverMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(@NonNull PointF point, @NonNull final LatLng coord) {
@@ -410,6 +413,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 Marker marker1 = new Marker();
                                 marker1.setPosition(new LatLng(coord.latitude, coord.longitude));
                                 marker1.setMap(mMap);
+
+                                vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
+                                VehicleMode vehicleMode = vehicleState.getVehicleMode();
+                                ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
+                                modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+
+//                                GuidedPoint point = drone.getAttribute(AttributeType.GUIDED_STATE);
+//                                point.newGuidedPosition(coord.latitude, coord.longitude, 3);
+
                             }
                         }).setNegativeButton("취소",
                         new DialogInterface.OnClickListener() {
@@ -422,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 AlertDialog alert = alert_confirm.create();
                 alert.show();
 
-                vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
+//                vehicleState.setVehicleMode(VehicleMode.COPTER_GUIDED);
 
 //                GuidedPoint.;
             }
