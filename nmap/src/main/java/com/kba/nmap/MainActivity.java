@@ -544,11 +544,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             case AttributeEvent.GPS_POSITION:
                 updateGpsPosition();
-//                updatesatCount();
-                break;
-
-            case AttributeEvent.GPS_COUNT:
-                updatesat();
                 break;
 
             case AttributeEvent.STATE_CONNECTED:
@@ -627,12 +622,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //
 //    }
 
-    protected void updatesat() {
-        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-        Gps gps = this.drone.getAttribute(AttributeType.GPS);
-        countTextView.setText(gps.getSatellitesCount());
-    }
-
     private void checkSoloState() {
         final SoloState soloState = drone.getAttribute(SoloAttributes.SOLO_STATE);
         if (soloState == null){
@@ -649,8 +638,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void updateGpsPosition() {
 
         Gps gps = this.drone.getAttribute(AttributeType.GPS);
-//        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
-//        countTextView.setText(String.format("%3.1f", gps.getSatellitesCount()) );
+        TextView countTextView = (TextView) findViewById(R.id.satelliteview);
+        countTextView.setText(String.valueOf(gps.getSatellitesCount()));
         LatLong recentLatLng = gps.getPosition();
         LatLng naverRecentLatLng = new LatLng(recentLatLng.getLatitude(), recentLatLng.getLongitude());
         marker.setPosition(naverRecentLatLng);
