@@ -19,30 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/btnConnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="onBtnConnectTap"
-        android:text="connect"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
-
-    <Button
-        android:id="@+id/arm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="onArmButtonTap"
-        android:text="arm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
 
     <Button
         android:id="@+id/clr"
@@ -310,6 +286,65 @@
             android:layout_height="wrap_content"
             android:text="맵잠금" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/atitu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="이륙고도:2m" />
+
+        <Button
+            android:id="@+id/btnconnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onBtnConnectTap"
+            android:text="connect" />
+
+        <Button
+            android:id="@+id/arm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onArmButtonTap"
+            android:text="arm" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="100dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout4">
+
+        <Button
+            android:id="@+id/up"
+            android:layout_width="37dp"
+            android:layout_height="match_parent"
+            android:text="up"
+            android:textSize="8sp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/down"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="down"
+            android:textSize="8sp"
+            android:visibility="invisible" />
     </LinearLayout>
 
 
