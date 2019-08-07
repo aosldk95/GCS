@@ -11,6 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     int altit = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         Log.i(TAG, "Start mainActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
