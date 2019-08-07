@@ -28,6 +28,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="clear"
+        android:background="#4D000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -35,7 +36,7 @@
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="25dp"
-        android:background="#80000000"
+        android:background="#40000000"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -208,6 +209,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="위성지도"
+            android:background="#4D000000"
             android:visibility="invisible" />
 
         <Button
@@ -215,6 +217,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="지형도"
+            android:background="#4D000000"
             android:visibility="invisible" />
 
         <Button
@@ -222,12 +225,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="일반지도"
+            android:background="#4D000000"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/con2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#4D000000"
             android:text="일반지도" />
     </LinearLayout>
 
@@ -247,12 +252,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="지적도 on"
+            android:background="#4D000000"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/onff1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#4D000000"
             android:text="지적도 off" />
     </LinearLayout>
 
@@ -271,6 +278,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="맵이동"
+            android:background="#4D000000"
             android:visibility="invisible" />
 
         <Button
@@ -278,12 +286,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="맵잠금"
+            android:background="#4D000000"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/con1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#4D000000"
             android:text="맵잠금" />
 
     </LinearLayout>
@@ -303,6 +313,7 @@
             android:id="@+id/atitu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#4D000000"
             android:text="이륙고도:2m" />
 
         <Button
@@ -310,6 +321,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onBtnConnectTap"
+            android:background="#4D000000"
             android:text="connect" />
 
         <Button
@@ -317,6 +329,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="onArmButtonTap"
+            android:background="#4D000000"
             android:text="arm" />
     </LinearLayout>
 
@@ -324,24 +337,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="100dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/linearLayout4">
+        app:layout_constraintStart_toEndOf="@+id/linearLayout4"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout4">
 
         <Button
             android:id="@+id/up"
-            android:layout_width="37dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
+            android:background="#4D000000"
             android:text="up"
             android:textSize="8sp"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/down"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
+            android:background="#4D000000"
             android:text="down"
             android:textSize="8sp"
             android:visibility="invisible" />
