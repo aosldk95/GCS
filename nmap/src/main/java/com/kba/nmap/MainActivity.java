@@ -60,6 +60,8 @@ import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean registGps = false;
     private NaverMap mMap;
 
+    public ArrayList<String>list = new ArrayList<>();
+
     int altit = 2;
 
 
@@ -90,15 +94,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayList<String> list = new ArrayList<>();
         for (int i=0; i <100; i++){
             list.add(String.valueOf(i));
         }
-        RecyclerView recyclerView = findViewById(R.id.recycler1);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        final RecyclerView recyclerView = findViewById(R.id.recycler1);
+
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                list.remove(0);
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(tt, 5000, 5000);
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         SimpleTextAdapter adapter = new SimpleTextAdapter(list);
         recyclerView.setAdapter(adapter);
+
+
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
