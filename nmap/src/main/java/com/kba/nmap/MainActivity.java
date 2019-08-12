@@ -80,17 +80,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean registGps = false;
     private NaverMap mMap;
 
-
-    int number = 0;
-    private Attitude droneYow;
-
     int altit = 2;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.i(TAG, "Start mainActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ArrayList<String> list = new ArrayList<>();
+        for (int i=0; i <100; i++){
+            list.add(String.valueOf(i));
+        }
+        RecyclerView recyclerView = findViewById(R.id.recycler1);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        SimpleTextAdapter adapter = new SimpleTextAdapter(list);
+        recyclerView.setAdapter(adapter);
+
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
         locationSource =
@@ -280,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         final Button cadastral1 = findViewById(R.id.onff1);
         final Button cadastral2 = findViewById(R.id.onff2);
+
         cadastral1.setOnClickListener(new View.OnClickListener() {
             int number = 1;
             @Override
@@ -368,6 +378,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 number += 1;
             }
         });
+        mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(@NonNull PointF point, @NonNull final LatLng coord) {
+                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+                alert_confirm.setMessage("해당 좌표로 사각형의 한점을 선택하시겠습니까?").setCancelable(false).setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                Marker marker2 = new Marker();
+//                                Marker marker3 = new Marker();
+//                                // 'YES'
+//                                if(marker2.getWidth()==0){
+//
+//                                    marker2.setPosition(new LatLng(coord.latitude, coord.longitude));
+//                                    marker2.setMap(mMap);
+//                                    marker2.setIcon(OverlayImage.fromResource(R.drawable.icons));
+//
+//                                }else if(marker3.getWidth()==0){
+//                                    marker3.setPosition(new LatLng(coord.latitude, coord.longitude));
+//                                    marker3.setMap(mMap);
+////                                    marker3.setIcon(OverlayImage.fromResource(R.drawable.icons));
+//
+//                                }
+
+                            }
+                        }).setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 'No'
+                                return;
+                            }
+                        });
+                AlertDialog alert = alert_confirm.create();
+                alert.show();
+            }
+        });
+
 
         mMap.setOnMapLongClickListener(new NaverMap.OnMapLongClickListener() {
             @Override

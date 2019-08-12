@@ -26,9 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="clear"
         android:background="#4D000000"
+        android:text="clear"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -199,7 +198,6 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout">
@@ -208,24 +206,24 @@
             android:id="@+id/map3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="위성지도"
             android:background="#4D000000"
+            android:text="위성지도"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/map2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="지형도"
             android:background="#4D000000"
+            android:text="지형도"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/map1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="일반지도"
             android:background="#4D000000"
+            android:text="일반지도"
             android:visibility="invisible" />
 
         <Button
@@ -242,7 +240,6 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/clr">
@@ -251,8 +248,8 @@
             android:id="@+id/onff2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="지적도 on"
             android:background="#4D000000"
+            android:text="지적도 on"
             android:visibility="invisible" />
 
         <Button
@@ -268,7 +265,6 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout2">
@@ -277,16 +273,16 @@
             android:id="@+id/lack2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="맵이동"
             android:background="#4D000000"
+            android:text="맵이동"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/lack1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="맵잠금"
             android:background="#4D000000"
+            android:text="맵잠금"
             android:visibility="invisible" />
 
         <Button
@@ -304,7 +300,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -320,16 +315,16 @@
             android:id="@+id/btnconnect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onBtnConnectTap"
             android:background="#4D000000"
+            android:onClick="onBtnConnectTap"
             android:text="connect" />
 
         <Button
             android:id="@+id/arm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="onArmButtonTap"
             android:background="#4D000000"
+            android:onClick="onArmButtonTap"
             android:text="arm" />
     </LinearLayout>
 
@@ -337,6 +332,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toEndOf="@+id/linearLayout4"
         app:layout_constraintTop_toTopOf="@+id/linearLayout4">
@@ -360,7 +356,16 @@
             android:visibility="invisible" />
     </LinearLayout>
 
-
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler1"
+        android:layout_width="wrap_content"
+        android:scrollbars="vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
 
 </android.support.constraint.ConstraintLayout>
