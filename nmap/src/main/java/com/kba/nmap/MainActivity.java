@@ -58,13 +58,14 @@ import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private Drone drone ;
     private int droneType = Type.TYPE_UNKNOWN;
     private ControlTower controlTower;
-    private final Handler handler = new Handler();
 
     private Spinner modeSelector;
 
@@ -81,9 +82,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<String>list ;
     private SimpleTextAdapter adapter;
     private RecyclerView recyclerView;
-
-
     int altit = 2;
+
+    public Handler handler = new Handler();
+
+//    private Handler mHandler;
+//    private CustomRunnable mCustomRunnable;
+//    private TextView mTvTimer;
+//    private String mCurrentTime;
+
+    private TimerTask second;
+    private final Handler mhandler = new Handler();
+
+
+
+
+
 
 
     @Override
@@ -92,23 +106,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        Log.i(TAG, "Start mainActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        list = new ArrayList<>();
-
-//        for (int i=0; i <100; i++){
-//            list.add(String.valueOf(i));
-//        }
-
-        recyclerView = findViewById(R.id.recycler1);
 
 //        TimerTask tt = new TimerTask() {
 //            @Override
 //            public void run() {
-//                list.remove(0);
+//                if (list.size() > 0) {
+//                    list.remove(0) ;
+//                    adapter.notifyDataSetChanged();
+//                }
 //            }
 //        };
-//
 //        Timer timer = new Timer();
-//        timer.schedule(tt, 5000, 5000);
+//        timer.schedule(tt,0,5000);
+
+        list = new ArrayList<>();
+        recyclerView = findViewById(R.id.recycler1);
+
+//        mCustomRunnable = new CustomRunnable();
+//        mHandler = new Handler();
+//        mHandler.postDelayed(mCustomRunnable, 5000);
+
+
+
+
+
+//        Handler timer = new Handler();
+//
+//
+//        timer.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (list.size() > 0) {
+//                    list.remove(0) ;
+//                    adapter.notifyDataSetChanged();
+//                }
+//            }
+//        },5000);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -148,6 +181,63 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             getSupportFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit();
         }
         mapFragment.getMapAsync(this);
+        testStart();
+    }
+
+//    @Override
+//    protected void onDestroy() {
+//        mHandler.removeCallbacks(mCustomRunnable);
+//        super.onDestroy();
+//    }
+//
+//    class CustomRunnable implements Runnable{
+//        @Override
+//        public void run() {
+//            try {
+//                while(true){
+//                    Thread.sleep(5000);
+//                    if (list.size() > 0) {
+//                        list.remove(0) ;
+//                        adapter.notifyDataSetChanged();
+//                    }
+//                    list.remove(0) ;
+//                    adapter.notifyDataSetChanged();
+//                }
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
+
+
+    public void testStart() {
+
+
+
+        second = new TimerTask() {
+
+            @Override
+            public void run() {
+
+                Update();
+
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(second, 5000, 5000);
+    }
+
+    protected void Update() {
+        Runnable updater = new Runnable() {
+            public void run() {
+                if (list.size() > 0) {
+                    list.remove(0) ;
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        };
+        handler.post(updater);
     }
 
     protected void updateAltitude() {
@@ -169,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onError(int executionError) {
-                list.add("비핸모드변환 실패: " + executionError);
+                list.add("비행모드변환 실패: " + executionError);
                 adapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(list.size()-1);
             }
