@@ -13,14 +13,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraUpdate;
@@ -60,8 +58,6 @@ import com.o3dr.services.android.lib.model.SimpleCommandListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DroneListener, TowerListener, LinkListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -82,7 +78,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean registGps = false;
     private NaverMap mMap;
 
-    public ArrayList<String>list = new ArrayList<>();
+    private ArrayList<String>list ;
+    private SimpleTextAdapter adapter;
+    private RecyclerView recyclerView;
+
 
     int altit = 2;
 
@@ -90,30 +89,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.i(TAG, "Start mainActivity");
+//        Log.i(TAG, "Start mainActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        list = new ArrayList<>();
 
-        for (int i=0; i <100; i++){
-            list.add(String.valueOf(i));
-        }
+//        for (int i=0; i <100; i++){
+//            list.add(String.valueOf(i));
+//        }
 
-        final RecyclerView recyclerView = findViewById(R.id.recycler1);
+        recyclerView = findViewById(R.id.recycler1);
 
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                list.remove(0);
-            }
-        };
-
-        Timer timer = new Timer();
-        timer.schedule(tt, 5000, 5000);
+//        TimerTask tt = new TimerTask() {
+//            @Override
+//            public void run() {
+//                list.remove(0);
+//            }
+//        };
+//
+//        Timer timer = new Timer();
+//        timer.schedule(tt, 5000, 5000);
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        SimpleTextAdapter adapter = new SimpleTextAdapter(list);
+        adapter = new SimpleTextAdapter(list);
         recyclerView.setAdapter(adapter);
+//        adapter.notifyItemInserted(0);
+
 
 
 
@@ -160,17 +162,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         VehicleApi.getApi(this.drone).setVehicleMode(vehicleMode, new AbstractCommandListener() {
             @Override
             public void onSuccess() {
-                alertUser("Vehicle mode change successful.");
+                list.add("비행모드 변환.");
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
             }
 
             @Override
             public void onError(int executionError) {
-                alertUser("Vehicle mode change failed: " + executionError);
+                list.add("비핸모드변환 실패: " + executionError);
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
             }
 
             @Override
             public void onTimeout() {
-                alertUser("Vehicle mode change timed out.");
+                list.add("비행모드 변환 시간 초과.");
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
             }
         });
     }
@@ -183,12 +191,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             VehicleApi.getApi(this.drone).setVehicleMode(VehicleMode.COPTER_LAND, new SimpleCommandListener() {
                 @Override
                 public void onError(int executionError) {
-                    alertUser("Unable to land the vehicle.");
+                    list.add("착륙불가.");
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(list.size()-1);
                 }
 
                 @Override
                 public void onTimeout() {
-                    alertUser("Unable to land the vehicle.");
+                    list.add("착륙불가.");
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(list.size()-1);
                 }
             });
         } else if (vehicleState.isArmed()) {
@@ -197,22 +209,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 @Override
                 public void onSuccess() {
-                    alertUser("Taking off...");
+                    list.add("이륙");
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(list.size()-1);
                 }
 
                 @Override
                 public void onError(int i) {
-                    alertUser("Unable to take off.");
+                    list.add("이륙불가.");
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(list.size()-1);
                 }
 
                 @Override
                 public void onTimeout() {
-                    alertUser("Unable to take off.");
+                    list.add("이륙불가.");
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(list.size()-1);
                 }
             });
         } else if (!vehicleState.isConnected()) {
             // Connect
-            alertUser("Connect to a drone first");
+            list.add("먼저 드론을 연결");
+            adapter.notifyDataSetChanged();
+            recyclerView.scrollToPosition(list.size()-1);
         } else {
 
             AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
@@ -226,12 +246,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             VehicleApi.getApi(drone).arm(true, false, new SimpleCommandListener() {
                                 @Override
                                 public void onError(int executionError) {
-                                    alertUser("Unable to arm vehicle.");
+                                    list.add("arm 불가.");
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.scrollToPosition(list.size()-1);
                                 }
 
                                 @Override
                                 public void onTimeout() {
-                                    alertUser("Arming operation timed out.");
+                                    list.add("아밍시간 초과.");
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.scrollToPosition(list.size()-1);
                                 }
                             });
                             // 'YES'
@@ -460,15 +484,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 ControlApi.getApi(drone).goTo(new LatLong(coord.latitude, coord.longitude), true, new AbstractCommandListener(){
                                     @Override
                                     public void onSuccess() {
-                                        alertUser("Go!!!!!!!!!! to point");
+                                        list.add("포인트로");
+                                        adapter.notifyDataSetChanged();
+                                        recyclerView.scrollToPosition(list.size()-1);
                                     }
                                     @Override
                                     public void onError(int i) {
-                                        alertUser("stop!!!!!!!!!!!! in error");
+                                        list.add("에러");
+                                        adapter.notifyDataSetChanged();
+                                        recyclerView.scrollToPosition(list.size()-1);
                                     }
                                     @Override
                                     public void onTimeout() {
-                                        alertUser("stop time limit");
+                                        list.add("시간초과");
+                                        adapter.notifyDataSetChanged();
+                                        recyclerView.scrollToPosition(list.size()-1);
                                     }
                                 } );
 
@@ -520,10 +550,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.controlTower.disconnect();
     }
 
-    protected void alertUser(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-        Log.d(TAG, message);
-    }
+//    protected void alertUser(String message) {
+//        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+//        Log.d(TAG, message);
+//    }
 
     protected void updateConnectedButton(Boolean isConnected) {
         Button connectButton = (Button) findViewById(R.id.btnconnect);
@@ -556,14 +586,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
 
             case AttributeEvent.STATE_CONNECTED:
-                alertUser("Drone Connected");
+                list.add("드론연결");
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
                 checkSoloState();
                 break;
 
             case AttributeEvent.STATE_DISCONNECTED:
-                alertUser("Drone Disconnected");
+                list.add("드론 연결해제");
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
                 updateConnectedButton(this.drone.isConnected());
                 updateArmButton();
                 break;
@@ -610,10 +644,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void checkSoloState() {
         final SoloState soloState = drone.getAttribute(SoloAttributes.SOLO_STATE);
         if (soloState == null){
-            alertUser("Unable to retrieve the solo state.");
+            list.add("상태검색불가.");
+            adapter.notifyDataSetChanged();
+            recyclerView.scrollToPosition(list.size()-1);
         }
         else {
-            alertUser("Solo state is up to date.");
+            list.add("상태 업데이트.");
+            adapter.notifyDataSetChanged();
+            recyclerView.scrollToPosition(list.size()-1);
         }
     }
 
@@ -732,7 +770,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onTowerConnected() {
-        alertUser("DroneKit-Android Connected");
+        list.add("드론과 안드로이드 연결");
+        adapter.notifyDataSetChanged();
+        recyclerView.scrollToPosition(list.size()-1);
         this.controlTower.registerDrone(this.drone, this.handler);
         this.drone.registerDroneListener(this);
 
@@ -740,7 +780,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onTowerDisconnected() {
-        alertUser("DroneKit-Android Interrupted");
+        list.add("드론과 안드로이드 연결 해제 ");
+        adapter.notifyDataSetChanged();
+        recyclerView.scrollToPosition(list.size()-1);
     }
 
     public void onBtnConnectTap(View view) {
@@ -772,7 +814,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (extras != null) {
                     msg = extras.getString(LinkConnectionStatus.EXTRA_ERROR_MSG);
                 }
-                alertUser("Connection Failed:" + msg);
+                list.add("연결실패:" + msg);
+                adapter.notifyDataSetChanged();
+                recyclerView.scrollToPosition(list.size()-1);
                 break;
         }
     }
