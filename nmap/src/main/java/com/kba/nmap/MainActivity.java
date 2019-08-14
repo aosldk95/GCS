@@ -56,6 +56,7 @@ import com.o3dr.services.android.lib.drone.property.VehicleMode;
 import com.o3dr.services.android.lib.gcs.link.LinkConnectionStatus;
 import com.o3dr.services.android.lib.model.AbstractCommandListener;
 import com.o3dr.services.android.lib.model.SimpleCommandListener;
+import com.o3dr.services.android.lib.util.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -303,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     Marker marker2 = new Marker();
     Marker marker3 = new Marker();
+
     @UiThread
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
@@ -439,6 +441,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+
+
         uiSettings.setZoomControlEnabled(false);
         mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
             @Override
@@ -466,6 +470,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     count -= 1;
 
                                 }
+
+                                LatLng position = marker3.getPosition();
+                                LatLng position1 = marker2.getPosition();
+
+                                double math = MathUtils.getDistance2D(new LatLong(position.latitude, position.longitude), new LatLong(position1.latitude, position1.longitude));
+                                double angle = MathUtils.getHeadingFromCoordinates(new LatLong(position.latitude, position.longitude), new LatLong(position1.latitude, position1.longitude));
+
+                                list.add(Double.toString(math));
+                                list.add(Double.toString(angle));
+                                adapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(list.size()-1);
 
                             }
                         }).setNegativeButton("취소",
