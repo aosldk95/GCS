@@ -103,54 +103,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-//        Log.i(TAG, "Start mainActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        TimerTask tt = new TimerTask() {
-//            @Override
-//            public void run() {
-//                if (list.size() > 0) {
-//                    list.remove(0) ;
-//                    adapter.notifyDataSetChanged();
-//                }
-//            }
-//        };
-//        Timer timer = new Timer();
-//        timer.schedule(tt,0,5000);
 
         list = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler1);
 
-//        mCustomRunnable = new CustomRunnable();
-//        mHandler = new Handler();
-//        mHandler.postDelayed(mCustomRunnable, 5000);
-
-
-
-
-
-//        Handler timer = new Handler();
-//
-//
-//        timer.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (list.size() > 0) {
-//                    list.remove(0) ;
-//                    adapter.notifyDataSetChanged();
-//                }
-//            }
-//        },5000);
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new SimpleTextAdapter(list);
         recyclerView.setAdapter(adapter);
-//        adapter.notifyItemInserted(0);
-
-
-
 
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
 
@@ -184,44 +145,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         testStart();
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        mHandler.removeCallbacks(mCustomRunnable);
-//        super.onDestroy();
-//    }
-//
-//    class CustomRunnable implements Runnable{
-//        @Override
-//        public void run() {
-//            try {
-//                while(true){
-//                    Thread.sleep(5000);
-//                    if (list.size() > 0) {
-//                        list.remove(0) ;
-//                        adapter.notifyDataSetChanged();
-//                    }
-//                    list.remove(0) ;
-//                    adapter.notifyDataSetChanged();
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-
-
     public void testStart() {
-
-
 
         second = new TimerTask() {
 
             @Override
             public void run() {
-
                 Update();
-
             }
         };
         Timer timer = new Timer();
@@ -639,11 +569,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.controlTower.unregisterDrone(this.drone);
         this.controlTower.disconnect();
     }
-
-//    protected void alertUser(String message) {
-//        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-//        Log.d(TAG, message);
-//    }
 
     protected void updateConnectedButton(Boolean isConnected) {
         Button connectButton = (Button) findViewById(R.id.btnconnect);
