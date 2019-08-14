@@ -26,6 +26,7 @@ import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapFragment;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.ArrowheadPathOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.OverlayImage;
@@ -92,13 +93,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //    private String mCurrentTime;
 
     private TimerTask second;
-    private final Handler mhandler = new Handler();
 
-
-
-
-
-
+    int count = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,12 +301,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 requestCode, permissions, grantResults);
     }
 
+    Marker marker2 = new Marker();
+    Marker marker3 = new Marker();
     @UiThread
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         naverMap.setMapType(NaverMap.MapType.Satellite);
         naverMap.setLocationSource(locationSource);
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
+        UiSettings uiSettings = naverMap.getUiSettings();
 
         mMap = naverMap;
         final Button ctl2 = findViewById(R.id.con2);
@@ -439,6 +438,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 number += 1;
             }
         });
+
+        uiSettings.setZoomControlEnabled(false);
         mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull PointF point, @NonNull final LatLng coord) {
@@ -449,21 +450,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-//                                Marker marker2 = new Marker();
-//                                Marker marker3 = new Marker();
-//                                // 'YES'
-//                                if(marker2.getWidth()==0){
-//
-//                                    marker2.setPosition(new LatLng(coord.latitude, coord.longitude));
-//                                    marker2.setMap(mMap);
-//                                    marker2.setIcon(OverlayImage.fromResource(R.drawable.icons));
-//
-//                                }else if(marker3.getWidth()==0){
-//                                    marker3.setPosition(new LatLng(coord.latitude, coord.longitude));
-//                                    marker3.setMap(mMap);
-////                                    marker3.setIcon(OverlayImage.fromResource(R.drawable.icons));
-//
-//                                }
+
+                                // 'YES'
+                                if (count == 1) {
+                                    marker3.setPosition(new LatLng(coord.latitude, coord.longitude));
+                                    marker3.setMap(mMap);
+                                    marker3.setIcon(OverlayImage.fromResource(R.drawable.iconsa));
+                                    count += 1;
+
+                                } else if(count == 2){
+
+                                    marker2.setPosition(new LatLng(coord.latitude, coord.longitude));
+                                    marker2.setMap(mMap);
+                                    marker2.setIcon(OverlayImage.fromResource(R.drawable.iconsb));
+                                    count -= 1;
+
+                                }
 
                             }
                         }).setNegativeButton("취소",
