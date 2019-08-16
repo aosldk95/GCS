@@ -367,5 +367,102 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/interval"
+            android:layout_width="40dp"
+            android:layout_height="28dp"
+            android:background="#4D000000"
+            android:text="간격:5m"
+            android:textSize="8sp" />
+
+        <Button
+            android:id="@+id/distant"
+            android:layout_width="40dp"
+            android:layout_height="28dp"
+            android:background="#4D000000"
+            android:text="거리:50m"
+            android:textSize="8sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout5">
+
+        <Button
+            android:id="@+id/distantup"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="#4D000000"
+            android:text="up"
+            android:textSize="8sp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/distantdown"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="#4D000000"
+            android:text="down"
+            android:textSize="8sp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout5">
+
+        <Button
+            android:id="@+id/intervalup"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="#4D000000"
+            android:text="up"
+            android:textSize="8sp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/intervaldown"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="#4D000000"
+            android:text="down"
+            android:textSize="8sp"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/mission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:text="임무시작"
+        android:background="#4D000000"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout4" />
+
 
 </android.support.constraint.ConstraintLayout>

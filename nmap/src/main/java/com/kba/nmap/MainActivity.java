@@ -81,10 +81,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean registGps = false;
     private NaverMap mMap;
 
-    private ArrayList<String>list ;
+    private ArrayList<String>list;
+    private ArrayList<LatLong>listLat;
     private SimpleTextAdapter adapter;
     private RecyclerView recyclerView;
     int altit = 2;
+    int inte = 5;
+    int dista =50;
 
     public Handler handler = new Handler();
 
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        listLat = new ArrayList<>();
         list = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler1);
 
@@ -308,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @UiThread
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
+        final State vehicleState = this.drone.getAttribute(AttributeType.STATE);
         naverMap.setMapType(NaverMap.MapType.Satellite);
         naverMap.setLocationSource(locationSource);
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
@@ -317,6 +322,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Button ctl2 = findViewById(R.id.con2);
 
         final Button alt = findViewById(R.id.atitu);
+        final Button missio = findViewById(R.id.mission);
+        final Button inter = findViewById(R.id.interval);
+        final Button distan = findViewById(R.id.distant);
+        final Button interup = findViewById(R.id.intervalup);
+        final Button interdown = findViewById(R.id.intervaldown);
+        final Button distanup = findViewById(R.id.distantup);
+        final Button distandown = findViewById(R.id.distantdown);
+
 
         final Button upper = findViewById(R.id.up);
         final Button downer = findViewById(R.id.down);
@@ -352,6 +365,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         final Button cadastral1 = findViewById(R.id.onff1);
         final Button cadastral2 = findViewById(R.id.onff2);
 
+
+
         cadastral1.setOnClickListener(new View.OnClickListener() {
             int number = 1;
             @Override
@@ -364,8 +379,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 number += 1;
             }
         });
-
-        final State vehicleState = this.drone.getAttribute(AttributeType.STATE);
 
         alt.setOnClickListener(new View.OnClickListener() {
             int number = 1;
@@ -388,9 +401,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view) {
                 altit += 1;
                 alt.setText("이륙고도:" + altit + "m");
-//                if (vehicleState.isFlying()) {
-//                    ControlApi.getApi(drone).climbTo(altit);
-//                }
             }
         });
 
@@ -400,9 +410,72 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void onClick(View view) {
                 altit -= 1;
                 alt.setText("이륙고도:" + altit + "m");
-//                if (vehicleState.isFlying()) {
-//                    ControlApi.getApi(drone).climbTo(altit);
-//                }
+            }
+        });
+
+        inter.setOnClickListener(new View.OnClickListener() {
+            int number = 1;
+            @Override
+            public void onClick(View view) {
+                if ((number%2)==0) {
+                    interup.setVisibility(View.INVISIBLE);
+                    interdown.setVisibility(View.INVISIBLE);
+                } else {
+                    interup.setVisibility(View.VISIBLE);
+                    interdown.setVisibility(View.VISIBLE);
+                }
+                number += 1;
+            }
+        });
+
+        interup.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                inte += 1;
+                inter.setText("간격" + inte + "m");
+            }
+        });
+
+        interdown.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                inte -= 1;
+                inter.setText("간격:" + inte + "m");
+            }
+        });
+
+        distan.setOnClickListener(new View.OnClickListener() {
+            int number = 1;
+            @Override
+            public void onClick(View view) {
+                if ((number%2)==0) {
+                    distanup.setVisibility(View.INVISIBLE);
+                    distandown.setVisibility(View.INVISIBLE);
+                } else {
+                    distanup.setVisibility(View.VISIBLE);
+                    distandown.setVisibility(View.VISIBLE);
+                }
+                number += 1;
+            }
+        });
+
+        distanup.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                dista += 1;
+                distan.setText("거리:" + dista + "m");
+            }
+        });
+
+        distandown.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                dista -= 1;
+                distan.setText("거리:" + dista + "m");
             }
         });
 
@@ -441,7 +514,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        missio.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View view) {
+                vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
+                VehicleMode vehicleMode = vehicleState.getVehicleMode();
+                ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
+                modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+            }
+        });
 
         uiSettings.setZoomControlEnabled(false);
         mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
@@ -454,6 +536,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+
+                                Marker marker4 = new Marker();
+                                Marker marker5 = new Marker();
 
                                 // 'YES'
                                 if (count == 1) {
@@ -473,9 +558,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 LatLng position = marker3.getPosition();
                                 LatLng position1 = marker2.getPosition();
+                                LatLong posi = new LatLong(position.latitude, position.longitude);
+                                LatLong posi1 = new LatLong(position1.latitude, position1.longitude);
+                                listLat.add(posi);
+                                listLat.add(posi1);
 
-                                double math = MathUtils.getDistance2D(new LatLong(position.latitude, position.longitude), new LatLong(position1.latitude, position1.longitude));
-                                double angle = MathUtils.getHeadingFromCoordinates(new LatLong(position.latitude, position.longitude), new LatLong(position1.latitude, position1.longitude));
+                                double math = MathUtils.getDistance2D(posi,posi1);
+                                double angle = MathUtils.getHeadingFromCoordinates(posi,posi1);
+//                                double xline = 500 * Math.cos(angle+90);
+//                                double yline = 500 * Math.sin(angle+90);
+//
+//                                if((listLat.size()/4)==1){
+//                                    LatLong adddis = MathUtils.addDistance(posi, xline, yline);
+//                                    LatLng addis = new LatLng(adddis.getLatitude(),adddis.getLongitude());
+//                                    marker4.setPosition(addis);
+//                                    marker4.setMap(mMap);
+//
+//                                    LatLong adddis1 = MathUtils.addDistance(posi1, xline, yline);
+//                                    LatLng addis1 = new LatLng(adddis1.getLatitude(),adddis1.getLongitude());
+//                                    marker5.setPosition(addis1);
+//                                    marker5.setMap(mMap);
+//
+//                                }
 
                                 list.add(Double.toString(math));
                                 list.add(Double.toString(angle));
