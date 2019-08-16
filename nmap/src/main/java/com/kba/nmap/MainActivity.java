@@ -565,21 +565,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 double math = MathUtils.getDistance2D(posi,posi1);
                                 double angle = MathUtils.getHeadingFromCoordinates(posi,posi1);
-//                                double xline = 500 * Math.cos(angle+90);
-//                                double yline = 500 * Math.sin(angle+90);
-//
-//                                if((listLat.size()/4)==1){
-//                                    LatLong adddis = MathUtils.addDistance(posi, xline, yline);
-//                                    LatLng addis = new LatLng(adddis.getLatitude(),adddis.getLongitude());
-//                                    marker4.setPosition(addis);
-//                                    marker4.setMap(mMap);
-//
-//                                    LatLong adddis1 = MathUtils.addDistance(posi1, xline, yline);
-//                                    LatLng addis1 = new LatLng(adddis1.getLatitude(),adddis1.getLongitude());
-//                                    marker5.setPosition(addis1);
-//                                    marker5.setMap(mMap);
-//
-//                                }
+                                double xline = 300 * Math.cos(angle+90);
+                                double yline = 300 * Math.sin(angle+90);
+
+                                if((listLat.size()/4)==1){
+                                    LatLong adddis = MathUtils.addDistance(posi, xline, yline);
+                                    LatLng addis = new LatLng(adddis.getLatitude(),adddis.getLongitude());
+                                    marker4.setPosition(addis);
+                                    marker4.setMap(mMap);
+
+                                    LatLong adddis1 = MathUtils.addDistance(posi1, xline, yline);
+                                    LatLng addis1 = new LatLng(adddis1.getLatitude(),adddis1.getLongitude());
+                                    marker5.setPosition(addis1);
+                                    marker5.setMap(mMap);
+
+                                }
 
                                 list.add(Double.toString(math));
                                 list.add(Double.toString(angle));
