@@ -30,6 +30,7 @@ import com.naver.maps.map.UiSettings;
 import com.naver.maps.map.overlay.ArrowheadPathOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.OverlayImage;
+import com.naver.maps.map.overlay.PathOverlay;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
@@ -82,13 +83,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NaverMap mMap;
 
     private ArrayList<String>list;
-    private ArrayList<LatLong>listLat;
+    private ArrayList<LatLong>listLat = new ArrayList<>();;
     private ArrayList<Integer>listinte;
     private SimpleTextAdapter adapter;
     private RecyclerView recyclerView;
     int altit = 2;
-    int inte = 5;
-    int dista =50;
+    int inte = 100;
+    int dista =500;
+    int count = 1;
+    ArrayList<LatLong> fourlist = new ArrayList<>();
+    ArrayList<LatLng> linelist = new ArrayList<>();
 
     public Handler handler = new Handler();
 
@@ -99,15 +103,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private TimerTask second;
 
-    int count = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listLat = new ArrayList<>();
         list = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler1);
 
@@ -309,12 +310,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     Marker marker2 = new Marker();
     Marker marker3 = new Marker();
-    Marker marker4 = new Marker();
-    Marker marker5 = new Marker();
 
     @UiThread
     @Override
-    public void onMapReady(@NonNull NaverMap naverMap) {
+    public void onMapReady(@NonNull final NaverMap naverMap) {
         final State vehicleState = this.drone.getAttribute(AttributeType.STATE);
         naverMap.setMapType(NaverMap.MapType.Satellite);
         naverMap.setLocationSource(locationSource);
@@ -529,7 +528,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-
         uiSettings.setZoomControlEnabled(false);
         mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
             @Override
@@ -539,11 +537,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         new DialogInterface.OnClickListener() {
 
 
+
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                ArrayList<LatLong> threelist = new ArrayList<>();
-                                ArrayList<LatLong> fourlist = new ArrayList<>();
 
                                 // 'YES'
                                 if (count == 1) {
@@ -551,6 +548,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     marker3.setMap(mMap);
                                     marker3.setIcon(OverlayImage.fromResource(R.drawable.iconsa));
                                     count += 1;
+                                    listLat.add(new LatLong(coord.latitude,coord.longitude));
 
                                 } else if(count == 2){
 
@@ -558,32 +556,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     marker2.setMap(mMap);
                                     marker2.setIcon(OverlayImage.fromResource(R.drawable.iconsb));
                                     count -= 1;
-
+                                    listLat.add(new LatLong(coord.latitude,coord.longitude));
                                 }
 
-                                LatLng position = marker3.getPosition();
-                                LatLng position1 = marker2.getPosition();
-                                LatLong posi = new LatLong(position.latitude, position.longitude);
-                                LatLong posi1 = new LatLong(position1.latitude, position1.longitude);
-                                listLat.add(posi);
-                                listLat.add(posi1);
-
-                                double math = MathUtils.getDistance2D(posi,posi1);
-                                double angle = MathUtils.getHeadingFromCoordinates(posi,posi1);
+                                if(listLat.size()>=2){
+                                double math = MathUtils.getDistance2D(listLat.get(0),listLat.get(1));
+                                double angle = MathUtils.getHeadingFromCoordinates(listLat.get(0),listLat.get(1));
                                 if(90<angle & angle<270){
                                     angle -= 90;
                                 }else {
                                     angle += 90;
                                 }
 
-                                LatLong threepoint = MathUtils.newCoordFromBearingAndDistance(posi,angle,dista);
-                                LatLong fourpoint = MathUtils.newCoordFromBearingAndDistance(posi1,angle,dista);
-
-                                if(listLat.size()>=4){
-                                    marker4.setPosition(new LatLng(threepoint.getLatitude(),threepoint.getLongitude()));
-                                    marker4.setMap(mMap);
-                                    marker5.setPosition(new LatLng(fourpoint.getLatitude(),fourpoint.getLongitude()));
-                                    marker5.setMap(mMap);
+//                                LatLong threepoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(0),angle,dista);
+//                                LatLong fourpoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(1),angle,dista);
                                     listinte = new ArrayList<>();
                                     int i = 1;
                                     while ((inte * i) < dista){
@@ -591,23 +577,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         i += 1;
                                     }
                                     for(int num : listinte) {
-                                        Marker marker1 = new Marker();
-                                        Marker marker6 = new Marker();
-                                        LatLong threepoint1 = MathUtils.newCoordFromBearingAndDistance(posi, angle, num);
-                                        LatLong fourpoint1 = MathUtils.newCoordFromBearingAndDistance(posi1, angle, num);
-                                        threelist.add(threepoint1);
+                                        LatLong threepoint1 = MathUtils.newCoordFromBearingAndDistance(listLat.get(1), angle, num);
+                                        LatLong fourpoint1 = MathUtils.newCoordFromBearingAndDistance(listLat.get(0), angle, num);
                                         fourlist.add(fourpoint1);
-                                        marker1.setPosition(new LatLng(threepoint1.getLatitude(), threepoint1.getLongitude()));
-                                        marker1.setMap(mMap);
-                                        marker6.setPosition(new LatLng(fourpoint1.getLatitude(), fourpoint1.getLongitude()));
-                                        marker6.setMap(mMap);
+                                        if(fourlist.size()==2){
+                                            listLat.add(fourlist.get(0));
+                                            listLat.add(fourlist.get(1));
+                                            fourlist.remove(1);
+                                            fourlist.remove(0);
+                                        }
+                                        listLat.add(threepoint1);
                                     }
+                                    for (LatLong num : listLat){
+                                        linelist.add(new LatLng(num.getLatitude(),num.getLongitude()));
+                                    }
+                                    PathOverlay path = new PathOverlay();
+                                    path.setCoords(
+                                            linelist
+                                    );
+                                    path.setMap(naverMap);
+                                    list.add(Double.toString(math));
+                                    list.add(Double.toString(angle));
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.scrollToPosition(list.size()-1);
                                 }
-
-                                list.add(Double.toString(math));
-                                list.add(Double.toString(angle));
-                                adapter.notifyDataSetChanged();
-                                recyclerView.scrollToPosition(list.size()-1);
 
                             }
                         }).setNegativeButton("취소",
