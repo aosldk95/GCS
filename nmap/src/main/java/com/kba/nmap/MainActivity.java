@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private ArrayList<String>list;
     private ArrayList<LatLong>listLat;
+    private ArrayList<Integer>listinte;
     private SimpleTextAdapter adapter;
     private RecyclerView recyclerView;
     int altit = 2;
@@ -308,6 +309,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     Marker marker2 = new Marker();
     Marker marker3 = new Marker();
+    Marker marker4 = new Marker();
+    Marker marker5 = new Marker();
 
     @UiThread
     @Override
@@ -317,6 +320,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         naverMap.setLocationSource(locationSource);
         naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
         UiSettings uiSettings = naverMap.getUiSettings();
+
 
         mMap = naverMap;
         final Button ctl2 = findViewById(R.id.con2);
@@ -525,6 +529,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+
         uiSettings.setZoomControlEnabled(false);
         mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
             @Override
@@ -537,8 +542,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                Marker marker4 = new Marker();
-                                Marker marker5 = new Marker();
+                                ArrayList<LatLong> threelist = new ArrayList<>();
+                                ArrayList<LatLong> fourlist = new ArrayList<>();
 
                                 // 'YES'
                                 if (count == 1) {
@@ -565,20 +570,38 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 double math = MathUtils.getDistance2D(posi,posi1);
                                 double angle = MathUtils.getHeadingFromCoordinates(posi,posi1);
-                                double xline = 300 * Math.cos(angle+90);
-                                double yline = 300 * Math.sin(angle+90);
+                                if(90<angle & angle<270){
+                                    angle -= 90;
+                                }else {
+                                    angle += 90;
+                                }
 
-                                if((listLat.size()/4)==1){
-                                    LatLong adddis = MathUtils.addDistance(posi, xline, yline);
-                                    LatLng addis = new LatLng(adddis.getLatitude(),adddis.getLongitude());
-                                    marker4.setPosition(addis);
+                                LatLong threepoint = MathUtils.newCoordFromBearingAndDistance(posi,angle,dista);
+                                LatLong fourpoint = MathUtils.newCoordFromBearingAndDistance(posi1,angle,dista);
+
+                                if(listLat.size()>=4){
+                                    marker4.setPosition(new LatLng(threepoint.getLatitude(),threepoint.getLongitude()));
                                     marker4.setMap(mMap);
-
-                                    LatLong adddis1 = MathUtils.addDistance(posi1, xline, yline);
-                                    LatLng addis1 = new LatLng(adddis1.getLatitude(),adddis1.getLongitude());
-                                    marker5.setPosition(addis1);
+                                    marker5.setPosition(new LatLng(fourpoint.getLatitude(),fourpoint.getLongitude()));
                                     marker5.setMap(mMap);
-
+                                    listinte = new ArrayList<>();
+                                    int i = 1;
+                                    while ((inte * i) < dista){
+                                        listinte.add(inte*i);
+                                        i += 1;
+                                    }
+                                    for(int num : listinte) {
+                                        Marker marker1 = new Marker();
+                                        Marker marker6 = new Marker();
+                                        LatLong threepoint1 = MathUtils.newCoordFromBearingAndDistance(posi, angle, num);
+                                        LatLong fourpoint1 = MathUtils.newCoordFromBearingAndDistance(posi1, angle, num);
+                                        threelist.add(threepoint1);
+                                        fourlist.add(fourpoint1);
+                                        marker1.setPosition(new LatLng(threepoint1.getLatitude(), threepoint1.getLongitude()));
+                                        marker1.setMap(mMap);
+                                        marker6.setPosition(new LatLng(fourpoint1.getLatitude(), fourpoint1.getLongitude()));
+                                        marker6.setMap(mMap);
+                                    }
                                 }
 
                                 list.add(Double.toString(math));
