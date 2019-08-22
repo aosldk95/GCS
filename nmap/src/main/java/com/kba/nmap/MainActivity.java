@@ -84,13 +84,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private ArrayList<String>list;
     private ArrayList<LatLong>listLat = new ArrayList<>();;
-    private ArrayList<Integer>listinte;
+    private ArrayList<Integer>listinte = new ArrayList<>();;
     private SimpleTextAdapter adapter;
     private RecyclerView recyclerView;
     int altit = 2;
-    int inte = 100;
-    int dista =500;
+    int inte = 5;
+    int dista =50;
     int count = 1;
+    int numb = 1;
     ArrayList<LatLong> fourlist = new ArrayList<>();
     ArrayList<LatLng> linelist = new ArrayList<>();
 
@@ -310,6 +311,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     Marker marker2 = new Marker();
     Marker marker3 = new Marker();
+    PathOverlay path = new PathOverlay();
 
     @UiThread
     @Override
@@ -468,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onClick(View view) {
-                dista += 1;
+                dista += 10;
                 distan.setText("거리:" + dista + "m");
             }
         });
@@ -477,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             @Override
             public void onClick(View view) {
-                dista -= 1;
+                dista -= 10;
                 distan.setText("거리:" + dista + "m");
             }
         });
@@ -517,16 +519,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        missio.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
-                VehicleMode vehicleMode = vehicleState.getVehicleMode();
-                ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
-                modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
-            }
-        });
 
         uiSettings.setZoomControlEnabled(false);
         mMap.setOnMapClickListener(new NaverMap.OnMapClickListener() {
@@ -541,13 +533,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-
                                 // 'YES'
                                 if (count == 1) {
                                     marker3.setPosition(new LatLng(coord.latitude, coord.longitude));
                                     marker3.setMap(mMap);
                                     marker3.setIcon(OverlayImage.fromResource(R.drawable.iconsa));
                                     count += 1;
+                                    listLat.clear();
+                                    listinte.clear();
+                                    fourlist.clear();
+                                    linelist.clear();
                                     listLat.add(new LatLong(coord.latitude,coord.longitude));
 
                                 } else if(count == 2){
@@ -570,7 +565,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 //                                LatLong threepoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(0),angle,dista);
 //                                LatLong fourpoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(1),angle,dista);
-                                    listinte = new ArrayList<>();
                                     int i = 1;
                                     while ((inte * i) < dista){
                                         listinte.add(inte*i);
@@ -591,7 +585,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     for (LatLong num : listLat){
                                         linelist.add(new LatLng(num.getLatitude(),num.getLongitude()));
                                     }
-                                    PathOverlay path = new PathOverlay();
                                     path.setCoords(
                                             linelist
                                     );
@@ -616,6 +609,136 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        missio.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                if(numb == 1){
+                    AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+                    alert_confirm.setMessage("시작?").setCancelable(false).setPositiveButton("확인",
+                            new DialogInterface.OnClickListener() {
+
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // 'YES'
+                                    vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
+                                    VehicleMode vehicleMode = vehicleState.getVehicleMode();
+                                    ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
+                                    modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+
+                                    missio.setText("임무중지");
+                                    numb += 1;
+
+                                    for(LatLng num: linelist){
+                                        ControlApi.getApi(drone).goTo(new LatLong(num.latitude, num.longitude), true, new AbstractCommandListener(){
+                                            @Override
+                                            public void onSuccess() {
+                                                list.add("포인트로");
+                                                adapter.notifyDataSetChanged();
+                                                recyclerView.scrollToPosition(list.size()-1);
+                                            }
+                                            @Override
+                                            public void onError(int i) {
+                                                list.add("에러");
+                                                adapter.notifyDataSetChanged();
+                                                recyclerView.scrollToPosition(list.size()-1);
+                                            }
+                                            @Override
+                                            public void onTimeout() {
+                                                list.add("시간초과");
+                                                adapter.notifyDataSetChanged();
+                                                recyclerView.scrollToPosition(list.size()-1);
+                                            }
+
+
+                                        } );
+
+                                    }
+
+                                }
+                            }).setNegativeButton("취소",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // 'No'
+                                    return;
+                                }
+                            });
+                    AlertDialog alert = alert_confirm.create();
+                    alert.show();
+                }else if(numb == 2){
+                    numb -= 1;
+                    vehicleState.setVehicleMode(VehicleMode.COPTER_LOITER);
+                    VehicleMode vehicleMode = vehicleState.getVehicleMode();
+                    ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
+                    modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+                    missio.setText("임무시작");
+                }
+//                int number = 1;
+//                if(number == 1){
+//                    number += 1;
+//                    AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
+//                    alert_confirm.setMessage("시작?").setCancelable(false).setPositiveButton("확인",
+//                            new DialogInterface.OnClickListener() {
+//
+//
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    // 'YES'
+//
+//                                    vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
+//                                    VehicleMode vehicleMode = vehicleState.getVehicleMode();
+//                                    ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
+//                                    modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
+//
+////                                    missio.setText("임무중지");
+//
+//                                    for(LatLng num: linelist){
+//                                        ControlApi.getApi(drone).goTo(new LatLong(num.latitude, num.longitude), true, new AbstractCommandListener(){
+//                                            @Override
+//                                            public void onSuccess() {
+//                                                list.add("포인트로");
+//                                                adapter.notifyDataSetChanged();
+//                                                recyclerView.scrollToPosition(list.size()-1);
+//                                            }
+//                                            @Override
+//                                            public void onError(int i) {
+//                                                list.add("에러");
+//                                                adapter.notifyDataSetChanged();
+//                                                recyclerView.scrollToPosition(list.size()-1);
+//                                            }
+//                                            @Override
+//                                            public void onTimeout() {
+//                                                list.add("시간초과");
+//                                                adapter.notifyDataSetChanged();
+//                                                recyclerView.scrollToPosition(list.size()-1);
+//                                            }
+//
+//
+//                                        } );
+//
+//                                    }
+//
+//                                }
+//                            }).setNegativeButton("취소",
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    // 'No'
+//                                    return;
+//                                }
+//                            });
+//                    AlertDialog alert = alert_confirm.create();
+//                    alert.show();
+//                }else if(number == 2){
+//                    missio.setText("임무시작");
+//                    number -= 1;
+//                }
+
+            }
+        });
 
         mMap.setOnMapLongClickListener(new NaverMap.OnMapLongClickListener() {
             @Override
