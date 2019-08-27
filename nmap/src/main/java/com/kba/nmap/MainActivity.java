@@ -31,6 +31,7 @@ import com.naver.maps.map.overlay.ArrowheadPathOverlay;
 import com.naver.maps.map.overlay.Marker;
 import com.naver.maps.map.overlay.OverlayImage;
 import com.naver.maps.map.overlay.PathOverlay;
+import com.naver.maps.map.overlay.PolygonOverlay;
 import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
@@ -60,6 +61,7 @@ import com.o3dr.services.android.lib.model.SimpleCommandListener;
 import com.o3dr.services.android.lib.util.MathUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -312,6 +314,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker marker2 = new Marker();
     Marker marker3 = new Marker();
     PathOverlay path = new PathOverlay();
+    PolygonOverlay polygon = new PolygonOverlay();
 
     @UiThread
     @Override
@@ -562,11 +565,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }else {
                                     angle += 90;
                                 }
-
-//                                LatLong threepoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(0),angle,dista);
-//                                LatLong fourpoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(1),angle,dista);
                                     int i = 1;
-                                    while ((inte * i) < dista){
+                                    while ((inte * i) <= dista){
                                         listinte.add(inte*i);
                                         i += 1;
                                     }
@@ -588,6 +588,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     path.setCoords(
                                             linelist
                                     );
+                                    LatLong threepoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(0),angle,dista);
+                                    LatLong fourpoint = MathUtils.newCoordFromBearingAndDistance(listLat.get(1),angle,dista);
+                                    polygon.setCoords(Arrays.asList(
+                                            new LatLng(listLat.get(0).getLatitude(),listLat.get(0).getLongitude()),
+                                            new LatLng(listLat.get(1).getLatitude(),listLat.get(1).getLongitude()),
+                                            new LatLng(fourpoint.getLatitude(),fourpoint.getLongitude()),
+                                            new LatLng(threepoint.getLatitude(), threepoint.getLongitude())
+
+                                    ));
+                                    polygon.setMap(naverMap);
+                                    polygon.setColor(Color.GREEN);
                                     path.setMap(naverMap);
                                     list.add(Double.toString(math));
                                     list.add(Double.toString(angle));
