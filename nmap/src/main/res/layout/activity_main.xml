@@ -459,8 +459,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:text="임무시작"
         android:background="#4D000000"
+        android:text="임무전송"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
         app:layout_constraintStart_toEndOf="@+id/linearLayout4" />
 

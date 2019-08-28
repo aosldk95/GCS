@@ -36,6 +36,7 @@ import com.naver.maps.map.util.FusedLocationSource;
 import com.o3dr.android.client.ControlTower;
 import com.o3dr.android.client.Drone;
 import com.o3dr.android.client.apis.ControlApi;
+import com.o3dr.android.client.apis.MissionApi;
 import com.o3dr.android.client.apis.VehicleApi;
 import com.o3dr.android.client.interfaces.DroneListener;
 import com.o3dr.android.client.interfaces.LinkListener;
@@ -47,6 +48,8 @@ import com.o3dr.services.android.lib.drone.attribute.AttributeType;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloAttributes;
 import com.o3dr.services.android.lib.drone.companion.solo.SoloState;
 import com.o3dr.services.android.lib.drone.connection.ConnectionParameter;
+import com.o3dr.services.android.lib.drone.mission.Mission;
+import com.o3dr.services.android.lib.drone.mission.item.spatial.Waypoint;
 import com.o3dr.services.android.lib.drone.property.Altitude;
 import com.o3dr.services.android.lib.drone.property.Attitude;
 import com.o3dr.services.android.lib.drone.property.Battery;
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     int inte = 5;
     int dista =50;
     int count = 1;
-    int numb = 1;
+    int numb = 0;
     ArrayList<LatLong> fourlist = new ArrayList<>();
     ArrayList<LatLng> linelist = new ArrayList<>();
 
@@ -315,6 +318,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     Marker marker3 = new Marker();
     PathOverlay path = new PathOverlay();
     PolygonOverlay polygon = new PolygonOverlay();
+    Waypoint waypo = new Waypoint();
+    Mission misi = new Mission();
 
     @UiThread
     @Override
@@ -546,6 +551,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     listinte.clear();
                                     fourlist.clear();
                                     linelist.clear();
+                                    numb =0;
+                                    misi.clear();
+                                    missio.setText("임무전송");
                                     listLat.add(new LatLong(coord.latitude,coord.longitude));
 
                                 } else if(count == 2){
@@ -575,14 +583,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         LatLong fourpoint1 = MathUtils.newCoordFromBearingAndDistance(listLat.get(0), angle, num);
                                         fourlist.add(fourpoint1);
                                         if(fourlist.size()==2){
-                                            listLat.add(fourlist.get(0));
-                                            listLat.add(fourlist.get(1));
-                                            fourlist.remove(1);
-                                            fourlist.remove(0);
+                                            listLat.addAll(fourlist);
+                                            fourlist.clear();
                                         }
                                         listLat.add(threepoint1);
                                     }
                                     for (LatLong num : listLat){
+
                                         linelist.add(new LatLng(num.getLatitude(),num.getLongitude()));
                                     }
                                     path.setCoords(
@@ -634,6 +641,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     // 'YES'
+
                                     vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
                                     VehicleMode vehicleMode = vehicleState.getVehicleMode();
                                     ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
@@ -641,33 +649,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                     missio.setText("임무중지");
                                     numb += 1;
-
-                                    for(LatLng num: linelist){
-                                        ControlApi.getApi(drone).goTo(new LatLong(num.latitude, num.longitude), true, new AbstractCommandListener(){
-                                            @Override
-                                            public void onSuccess() {
-                                                list.add("포인트로");
-                                                adapter.notifyDataSetChanged();
-                                                recyclerView.scrollToPosition(list.size()-1);
-                                            }
-                                            @Override
-                                            public void onError(int i) {
-                                                list.add("에러");
-                                                adapter.notifyDataSetChanged();
-                                                recyclerView.scrollToPosition(list.size()-1);
-                                            }
-                                            @Override
-                                            public void onTimeout() {
-                                                list.add("시간초과");
-                                                adapter.notifyDataSetChanged();
-                                                recyclerView.scrollToPosition(list.size()-1);
-                                            }
-
-
-                                        } );
-
-                                    }
-
                                 }
                             }).setNegativeButton("취소",
                             new DialogInterface.OnClickListener() {
@@ -686,67 +667,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
                     modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
                     missio.setText("임무시작");
+                }else{
+                    for(LatLong num: listLat){
+                        waypo.setCoordinate(new LatLongAlt(num,altit));
+                        misi.addMissionItem(waypo);
+                    }
+                    MissionApi.getApi(drone).setMission(misi,true);
+                    missio.setText("임무시작");
+                    numb+=1;
+
                 }
-//                int number = 1;
-//                if(number == 1){
-//                    number += 1;
-//                    AlertDialog.Builder alert_confirm = new AlertDialog.Builder(MainActivity.this);
-//                    alert_confirm.setMessage("시작?").setCancelable(false).setPositiveButton("확인",
-//                            new DialogInterface.OnClickListener() {
-//
-//
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    // 'YES'
-//
-//                                    vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
-//                                    VehicleMode vehicleMode = vehicleState.getVehicleMode();
-//                                    ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
-//                                    modeSelector.setSelection(arrayAdapter.getPosition(vehicleMode));
-//
-////                                    missio.setText("임무중지");
-//
-//                                    for(LatLng num: linelist){
-//                                        ControlApi.getApi(drone).goTo(new LatLong(num.latitude, num.longitude), true, new AbstractCommandListener(){
-//                                            @Override
-//                                            public void onSuccess() {
-//                                                list.add("포인트로");
-//                                                adapter.notifyDataSetChanged();
-//                                                recyclerView.scrollToPosition(list.size()-1);
-//                                            }
-//                                            @Override
-//                                            public void onError(int i) {
-//                                                list.add("에러");
-//                                                adapter.notifyDataSetChanged();
-//                                                recyclerView.scrollToPosition(list.size()-1);
-//                                            }
-//                                            @Override
-//                                            public void onTimeout() {
-//                                                list.add("시간초과");
-//                                                adapter.notifyDataSetChanged();
-//                                                recyclerView.scrollToPosition(list.size()-1);
-//                                            }
-//
-//
-//                                        } );
-//
-//                                    }
-//
-//                                }
-//                            }).setNegativeButton("취소",
-//                            new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    // 'No'
-//                                    return;
-//                                }
-//                            });
-//                    AlertDialog alert = alert_confirm.create();
-//                    alert.show();
-//                }else if(number == 2){
-//                    missio.setText("임무시작");
-//                    number -= 1;
-//                }
 
             }
         });
@@ -920,6 +850,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             case AttributeEvent.ATTITUDE_UPDATED:
                 updateYaw();
                 break;
+
+//            case AttributeEvent.MISSION_SENT:
+//
+//                break;
 
             default:
                 // Log.i("DRONE_EVENT", event); //Uncomment to see events from the drone
