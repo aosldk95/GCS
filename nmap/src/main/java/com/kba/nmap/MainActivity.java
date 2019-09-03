@@ -641,7 +641,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     // 'YES'
-
                                     vehicleState.setVehicleMode(VehicleMode.COPTER_AUTO);
                                     VehicleMode vehicleMode = vehicleState.getVehicleMode();
                                     ArrayAdapter arrayAdapter = (ArrayAdapter) modeSelector.getAdapter();
