@@ -670,8 +670,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for(LatLong num: listLat){
                         waypo.setCoordinate(new LatLongAlt(num,altit));
                         misi.addMissionItem(waypo);
+                        MissionApi.getApi(drone).setMission(misi,true);
                     }
-                    MissionApi.getApi(drone).setMission(misi,true);
                     missio.setText("임무시작");
                     numb+=1;
 
